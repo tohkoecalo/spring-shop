@@ -1,0 +1,15 @@
+.nav {
+    background-color: #073a61;
+}
+
+.nav-p {
+    color: white !important;
+    padding-top: 14px;
+    line-height: 0px; 
+    cursor: pointer;
+}
+
+.inline-card {
+    width: 17rem; 
+    display: inline-block;
+}
