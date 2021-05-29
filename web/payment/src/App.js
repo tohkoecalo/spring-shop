@@ -4,7 +4,7 @@ import './css/index.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 
-import CardPage from "./pages/card";
+import CardPage from "./pages/cart";
 import CatalogPage from "./pages/catalog";
 
 class App extends React.Component {
@@ -22,14 +22,15 @@ class App extends React.Component {
           <Router>
             <div class="navbar navbar-light navbar-fixed-top nav">
               <div class="container">
-                <Link to="/catalog">Shop</Link> {/* need style */}
-                <Link to="/card" class="text-right nav-p">Card</Link>
+                <Link to="/catalog" class="navbar-brand nav-p">Shop</Link>
+                <Link to="/cart" class="navbar-brand text-right"><img src="cart.png" class="nav-img"/></Link>
               </div>
             </div>
             <div class="container">
               <Switch>
-                <Route path="/card" component={CardPage}></Route>
+                <Route path="/cart" component={CardPage}></Route>
                 <Route path="/catalog" component={CatalogPage}></Route>
+                <Redirect to="/catalog"></Redirect>
               </Switch>
             </div>
           </Router>

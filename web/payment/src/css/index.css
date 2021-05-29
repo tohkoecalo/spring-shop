@@ -24,7 +24,12 @@ code {
 
 .nav-p {
   color: white !important;
-  padding-top: 14px;
-  line-height: 0px; 
+  padding-top: 0px;
+  line-height: 10px; 
   cursor: pointer;
+}
+
+.nav-img {
+  filter: brightness(0) invert(1);
+  height: 20px;
 }
