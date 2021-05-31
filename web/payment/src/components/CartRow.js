@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/index.css';
 
-class Cart extends React.Component {
+class CartRow extends React.Component {
     render() {
         return (
             <tr>
@@ -13,4 +13,4 @@ class Cart extends React.Component {
     }
 }
 
-export default Cart;
+export default CartRow;

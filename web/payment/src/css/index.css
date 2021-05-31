@@ -19,7 +19,8 @@ code {
 }
 
 .nav {
-  background-color: #073a61;
+  /*background-color: #073a61;*/
+  background-color: #0275d8;
 }
 
 .nav-p {
@@ -32,4 +33,13 @@ code {
 .nav-img {
   filter: brightness(0) invert(1);
   height: 20px;
+}
+
+.cart-button{
+  display:inline-block;
+  margin-right: 10px;
+}
+
+.price{
+  margin-left: 10px;
 }

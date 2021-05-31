@@ -6,33 +6,45 @@ class CatalogPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            arr: [
+            products: [
                 {
                     name: "",
-                    des: ""
+                    des: "",
+                    price: 1.99
                 },
                 {
                     name: "",
-                    des: ""
+                    des: "",
+                    price: 1.19
                 },
                 {
                     name: "",
-                    des: ""
+                    des: "",
+                    price: 2.29
                 },
                 {
                     name: "",
-                    des: ""
+                    des: "",
+                    price: 0.69
                 }
             ]
         }
+    }    
+
+    initProds() {
+        for (var i = 0; i < this.state.products.length; i++) {
+            this.state.products[i].name = "Product #" + (i + 1);
+            this.state.products[i].des = "Description of Product #" + (i + 1);
+        }         
     }
 
-    renderArr = (item, index) => {
-        return <Product name={"Product #" + ++index} des={"Description of Product #" + index} btn={"Add to card"} />
+    renderProds = (item, index) => {
+        return <Product item={item} />
     }
 
     render() {
-        return this.state.arr.map(this.renderArr);
+        this.initProds();
+        return this.state.products.map(this.renderProds);
     }
 }
 
