@@ -21,11 +21,6 @@ class CartPage extends React.Component {
         }
     }
 
-    addNewItem = () => {
-        let { cart, input } = this.state;
-        cart.push(input);
-      };
-
     renderCard = (item, key) => {
         return <CartRow product={item.product} amount={item.amount} price={item.amount * item.price + "$"} />
     }

@@ -5,8 +5,7 @@ import CartPage from "../pages/cart";
 class Product extends React.Component {
 
   addToCard = (product) => {
-    //this.props.addNewItem(product);
-    //CartPage.addNewItem(product);
+    //
   }
 
   render() {

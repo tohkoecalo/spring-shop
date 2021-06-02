@@ -6,36 +6,32 @@ class CatalogPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            products: [
-                {
-                    name: "",
-                    des: "",
-                    price: 1.99
-                },
-                {
-                    name: "",
-                    des: "",
-                    price: 1.19
-                },
-                {
-                    name: "",
-                    des: "",
-                    price: 2.29
-                },
-                {
-                    name: "",
-                    des: "",
-                    price: 0.69
-                }
-            ]
+            products: []
         }
-    }    
+    }
+
+    componentDidMount() {
+        fetch("http://localhost:8081/products")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        products: result.items
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        products: []
+                    });
+                }
+            )
+    }
 
     initProds() {
         for (var i = 0; i < this.state.products.length; i++) {
             this.state.products[i].name = "Product #" + (i + 1);
             this.state.products[i].des = "Description of Product #" + (i + 1);
-        }         
+        }
     }
 
     renderProds = (item, index) => {
@@ -43,7 +39,6 @@ class CatalogPage extends React.Component {
     }
 
     render() {
-        this.initProds();
         return this.state.products.map(this.renderProds);
     }
 }
