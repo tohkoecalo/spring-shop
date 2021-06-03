@@ -24,15 +24,16 @@ class CatalogPage extends React.Component {
                         products: []
                     });
                 }
-            )
+            );
+            
     }
 
-    initProds() {
+    /*initProds() {
         for (var i = 0; i < this.state.products.length; i++) {
             this.state.products[i].name = "Product #" + (i + 1);
             this.state.products[i].des = "Description of Product #" + (i + 1);
         }
-    }
+    }*/
 
     renderProds = (item, index) => {
         return <Product item={item} />
