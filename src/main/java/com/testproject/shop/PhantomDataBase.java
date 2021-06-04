@@ -27,6 +27,9 @@ public class PhantomDataBase {
         private static void addToCart(Product product){
             cart.add(product);
         }
+        private static void clearCart() {
+            cart.clear();
+        }
     }
 
     public static PhantomDataBase getInstance(){
@@ -47,5 +50,9 @@ public class PhantomDataBase {
 
     public void addToCart(Product product){
         Cart.addToCart(product);
+    }
+
+    public void clearCart(){
+        Cart.clearCart();
     }
 }

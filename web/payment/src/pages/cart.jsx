@@ -6,33 +6,48 @@ class CartPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cart: [
-                {
-                    product: "test1",
-                    amount: "1",
-                    price: 1.99
-                },
-                {
-                    product: "test2",
-                    amount: "2",
-                    price: 0.69
-                }
-            ]
+            isFetching: false,
+            cart: []
         }
     }
 
+    componentDidMount() {
+        this.setState({ isFetching: true });
+        fetch("http://localhost:8081/cart")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                this.setState({
+                    cart: json,
+                    isFetching: false
+                });
+            }.bind(this))
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
     renderCard = (item, key) => {
-        return <CartRow product={item.product} amount={item.amount} price={item.amount * item.price + "$"} />
+        return <CartRow product={item.name} amount={1} price={1 * item.price + "$"} />
+    }
+
+    clearCart() {
+        const requestOptions = {
+            method: 'DELETE'
+        };
+        fetch("http://localhost:8081/cart", requestOptions);
+        //window.location.reload(false);
     }
 
     render() {
+        if (this.state.isFetching) return <div>Loading...</div>;
         return (
             <>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">Product</th>
-                            <th scope="col">Amount</th>
                             <th scope="col">Price</th>
                         </tr>
                     </thead>
@@ -42,7 +57,7 @@ class CartPage extends React.Component {
                 </table>
                 <div class="cart-button">
                     <button type="button" class="btn btn-outline-success cart-button">Purchase</button>
-                    <button type="button" class="btn btn-outline-danger cart-button">Clear</button>
+                    <button type="button" class="btn btn-outline-danger cart-button" onClick={() => this.clearCart()}>Clear</button>
                 </div>
             </>
         );

@@ -6,40 +6,34 @@ class CatalogPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isFetching: false,
             products: []
         }
     }
 
     componentDidMount() {
+        this.setState({ isFetching: true });
         fetch("http://localhost:8081/products")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        products: result.items
-                    });
-                },
-                (error) => {
-                    this.setState({
-                        products: []
-                    });
-                }
-            );
-            
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                this.setState({
+                    products: json,
+                    isFetching: false
+                });
+            }.bind(this))
+            .catch((error) => {
+                console.log(error);
+            });
     }
-
-    /*initProds() {
-        for (var i = 0; i < this.state.products.length; i++) {
-            this.state.products[i].name = "Product #" + (i + 1);
-            this.state.products[i].des = "Description of Product #" + (i + 1);
-        }
-    }*/
 
     renderProds = (item, index) => {
         return <Product item={item} />
     }
 
     render() {
+        if (this.state.isFetching) return <div>Loading...</div>;
         return this.state.products.map(this.renderProds);
     }
 }
