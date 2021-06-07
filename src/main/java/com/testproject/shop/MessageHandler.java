@@ -1,6 +1,12 @@
 package com.testproject.shop;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.traversal.DocumentTraversal;
+import org.w3c.dom.traversal.NodeFilter;
+import org.w3c.dom.traversal.NodeIterator;
 import org.xml.sax.InputSource;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -23,6 +29,10 @@ public class MessageHandler {
     private static final String SHA_256_ALGORITHM = "SHA-256";
     private static final String TLS_ALGORITHM = "TLS";
     private static final String CHARSET_UTF_8 = "utf-8";
+
+    public static String tmp_test = "<TKKPG><Request><Operation>CreateOrder</Operation><Language>RU</Language>" +
+            "<Order><Merchant>POS_1</Merchant><Amount>2500</Amount><Currency>643</Currency><Description>Test</Description>" +
+            "</Order></Request></TKKPG>";
 
     private String sha256(String original){//String xmlRequest, String merchant, String password
         byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
@@ -77,23 +87,40 @@ public class MessageHandler {
         return "";
     }
 
-    public Map<String, String> rsContent(String xmlResponse){
-        Map<String, String> result = new HashMap<>();
-        Document xmlDoc = null;//fooooo
-        try {
-            xmlDoc = loadXMLFromString(xmlResponse);
-        } catch (Exception e){
-            e.printStackTrace();
+    private static String getFirstLevelTextContent(Node node) {
+        NodeList list = node.getChildNodes();
+        StringBuilder textContent = new StringBuilder();
+        for (int i = 0; i < list.getLength(); ++i) {
+            Node child = list.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE)
+                textContent.append(child.getTextContent());
         }
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        return null;
+        return textContent.toString();
     }
 
-    public static Document loadXMLFromString(String xml) throws Exception{
+    public Map<String, String> getRsContent(String xmlResponse){
+        Map<String, String> result = new HashMap<>();
+        Document xmlDoc = loadXMLFromString(xmlResponse);
+        DocumentTraversal traversal = (DocumentTraversal) xmlDoc;
+        NodeIterator iterator = traversal.createNodeIterator(xmlDoc.getDocumentElement(), NodeFilter.SHOW_ELEMENT, null, true);
+        for (Node n = iterator.nextNode(); n != null; n = iterator.nextNode()) {
+            String tag = ((Element) n).getTagName();
+            if (getFirstLevelTextContent(n).length() > 0){
+                result.put(tag, getFirstLevelTextContent(n));
+            }
+        }
+        return result;
+    }
+
+    public static Document loadXMLFromString(String xml){
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        InputSource is = new InputSource(new StringReader(xml));
-        return builder.parse(is);
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+            return builder.parse(new InputSource(new StringReader(xml)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;//foo
     }
 }
