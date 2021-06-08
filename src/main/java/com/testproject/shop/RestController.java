@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class MainController {
+public class RestController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path="/products")
     public @ResponseBody Iterable<Product> getAllProducts() {
