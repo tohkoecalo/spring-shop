@@ -8,8 +8,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class Request {
-    public static enum Operation {
+public class RequestBody {
+    public enum Operation {
         CREATE_ORDER("CreateOrder"), CHECK_3DS_ENROLLED("Check3DSEnrolled"), GET_PAREQ_FORM("GetPAReqForm"),
         PROCESS_PARES("ProcessPARes"), PURCHASE("Purchase");
 
@@ -24,14 +24,14 @@ public class Request {
 
     private Document body;
 
-    private Request(){}
+    private RequestBody(){}
 
     public Document getBody(){
         return body;
     }
 
     public static Builder newBuilder() {
-        return new Request().new Builder();
+        return new RequestBody().new Builder();
     }
 
     public class Builder{
@@ -39,15 +39,15 @@ public class Request {
             try {
                 DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-                Request.this.body = documentBuilder.newDocument();
+                RequestBody.this.body = documentBuilder.newDocument();
 
-                Element root = Request.this.body.createElement("TKKPG");
-                Request.this.body.appendChild(root);
+                Element root = RequestBody.this.body.createElement("TKKPG");
+                RequestBody.this.body.appendChild(root);
 
-                Element request = Request.this.body.createElement("Request");
+                Element request = RequestBody.this.body.createElement("Request");
                 root.appendChild(request);
 
-                Element order = Request.this.body.createElement("Order");
+                Element order = RequestBody.this.body.createElement("Order");
                 request.appendChild(order);
             } catch (ParserConfigurationException e){
                 e.printStackTrace();
@@ -111,17 +111,17 @@ public class Request {
         }
 
         private Builder setRequestElement(String tag, String value){
-            Element element = Request.this.body.createElement(tag);
-            element.appendChild(Request.this.body.createTextNode(value));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
+            Element element = RequestBody.this.body.createElement(tag);
+            element.appendChild(RequestBody.this.body.createTextNode(value));
+            NodeList tmp = RequestBody.this.body.getElementsByTagName("Request");
             tmp.item(0).appendChild(element);
             return this;
         }
 
         private Builder setOrderElement(String tag, String value){
-            Element element = Request.this.body.createElement(tag);
-            element.appendChild(Request.this.body.createTextNode(value));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
+            Element element = RequestBody.this.body.createElement(tag);
+            element.appendChild(RequestBody.this.body.createTextNode(value));
+            NodeList tmp = RequestBody.this.body.getElementsByTagName("Order");
             tmp.item(0).appendChild(element);
             return this;
         }
@@ -144,8 +144,8 @@ public class Request {
         * authData -mb
         * */
 
-        public Request build(){
-            return Request.this;
+        public RequestBody build(){
+            return RequestBody.this;
         }
     }
 

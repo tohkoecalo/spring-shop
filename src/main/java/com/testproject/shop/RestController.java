@@ -2,6 +2,7 @@ package com.testproject.shop;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class RestController {
@@ -30,22 +31,21 @@ public class RestController {
         PhantomDataBase.getInstance().clearCart();
     }
 
-    Communicator communicator = new Communicator();
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(path="/order/create")
-    public @ResponseBody void createOrder() {
-        //communicator.createOrder();
+    @PostMapping(path="/order/create")
+    public @ResponseBody void createOrder(@RequestParam(value = "Amount") String amount) {
+        OperationProvider.getInstance().createOrder(amount);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(path="/order/purchase")
-    public @ResponseBody void purchase() {
+    @PostMapping(path="/order/purchase", consumes = "application/json")
+    public @ResponseBody void purchase() {//Need card reqs
         /*String status;
-        if (communicator.check3ds()) {
-            String redirectUrl = communicator.getPAReqForm();
-            status = communicator.processPARes();
+        if (Communicator.getInstance().check3ds()){
+            String redirectUrl = Communicator.getInstance().getPAReqForm();
+            status = Communicator.getInstance().processPARes();
         } else {
-            status = communicator.purchase();
+            status = Communicator.getInstance().purchase();
         }*/
     }
 }

@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 public class Utils {
     public static String representXmlDocAsString(Document document) throws TransformerException {
@@ -52,5 +53,9 @@ public class Utils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static boolean isResponseSuccess(Map<String, String> response){
+        return response.get("Status").equals("00");
     }
 }

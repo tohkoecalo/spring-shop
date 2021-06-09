@@ -23,7 +23,19 @@ public class CommunicationHandler {
     private static final String MERCHANT = "REPLACE_ME";
     private static final String PASSWORD = "REPLACE_ME";
 
-    public String sendRequest(String body) { //Methods sends only HTTP POST request on constant url
+    public CommunicationHandler(){}
+
+    public Map<String, String> provideRequest(Document body) {
+        Map<String, String> responseDetails = null;
+        try {
+            responseDetails = getResponseDataAsMap(sendRequest(Utils.representXmlDocAsString(body)));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return responseDetails;
+    }
+
+    private String sendRequest(String body) { //Methods sends only HTTP POST request on constant url
         try {
             URL rUrl = new URL(URL);
             HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
@@ -55,7 +67,7 @@ public class CommunicationHandler {
         return "";
     }
 
-    public Map<String, String> getResponseDataAsMap(String xmlResponse) { //Represents response content as map
+    private Map<String, String> getResponseDataAsMap(String xmlResponse) {
         Map<String, String> result = new HashMap<>();
         Document xmlDoc = Utils.loadXmlDocFromString(xmlResponse);
         DocumentTraversal traversal = (DocumentTraversal) xmlDoc;
