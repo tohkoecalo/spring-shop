@@ -55,118 +55,62 @@ public class Request {
         }
 
         public Builder setOperation(String operation){
-            Element eOperation = Request.this.body.createElement("Operation");
-            eOperation.appendChild(Request.this.body.createTextNode(operation));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eOperation);
-            return this;
+            return setRequestElement("Operation", operation);
         }
 
         public Builder setLanguage(String language){
-            Element eLanguage = Request.this.body.createElement("Language");
-            eLanguage.appendChild(Request.this.body.createTextNode(language));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eLanguage);
-            return this;
+            return setRequestElement("Language", language);
         }
 
         public Builder setMerchant(String merchant){
-            Element eMerchant = Request.this.body.createElement("Merchant");
-            eMerchant.appendChild(Request.this.body.createTextNode(merchant));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
-            tmp.item(0).appendChild(eMerchant);
-            return this;
+            return setOrderElement("Merchant", merchant);
         }
 
         public Builder setAmount(String amount){
-            Element eAmount = Request.this.body.createElement("Amount");
-            eAmount.appendChild(Request.this.body.createTextNode(amount));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
-            tmp.item(0).appendChild(eAmount);
-            return this;
+            return setOrderElement("Amount", amount);
         }
 
         public Builder setCurrency(String currency){
-            Element eCurrency = Request.this.body.createElement("Currency");
-            eCurrency.appendChild(Request.this.body.createTextNode(currency));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
-            tmp.item(0).appendChild(eCurrency);
-            return this;
+            return setOrderElement("Currency", currency);
         }
 
         public Builder setDescription(String description){
-            Element eDescription = Request.this.body.createElement("Description");
-            eDescription.appendChild(Request.this.body.createTextNode(description));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
-            tmp.item(0).appendChild(eDescription);
-            return this;
+            return setOrderElement("Description", description);
         }
 
         public Builder setOrderId(String orderId){
-            Element eOrderId = Request.this.body.createElement("OrderID");
-            eOrderId.appendChild(Request.this.body.createTextNode(orderId));
-            NodeList tmp = Request.this.body.getElementsByTagName("Order");
-            tmp.item(0).appendChild(eOrderId);
-            return this;
+            return setOrderElement("OrderID", orderId);
         }
 
         public Builder setSessionId(String sessionId){
-            Element eSessionID = Request.this.body.createElement("SessionID");
-            eSessionID.appendChild(Request.this.body.createTextNode(sessionId));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eSessionID);
-            return this;
+            return setRequestElement("SessionID", sessionId);
         }
 
         public Builder setPAN(String pan){
-            Element ePAN = Request.this.body.createElement("PAN");
-            ePAN.appendChild(Request.this.body.createTextNode(pan));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(ePAN);
-            return this;
+            return setRequestElement("PAN", pan);
         }
 
         public Builder setExpDate(String expDate){
-            Element eExpDate = Request.this.body.createElement("ExpDate");
-            eExpDate.appendChild(Request.this.body.createTextNode(expDate));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eExpDate);
-            return this;
+            return setRequestElement("ExpDate", expDate);
         }
 
         public Builder setEncodedPAReq(String encodedPAReq){
-            Element eEncodedPAReq = Request.this.body.createElement("EncodedPAReq");
-            eEncodedPAReq.appendChild(Request.this.body.createTextNode(encodedPAReq));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eEncodedPAReq);
-            return this;
+            return setRequestElement("EncodedPAReq", encodedPAReq);
         }
 
         public Builder setPARes(String paRes){
-            Element ePARes = Request.this.body.createElement("PARes");
-            ePARes.appendChild(Request.this.body.createTextNode(paRes));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(ePARes);
-            return this;
+            return setRequestElement("PARes", paRes);
         }
 
         public Builder setCVV2(String cvv2){
-            Element eCVV2 = Request.this.body.createElement("CVV2");
-            eCVV2.appendChild(Request.this.body.createTextNode(cvv2));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eCVV2);
-            return this;
+            return setRequestElement("CVV2", cvv2);
         }
 
-        public Builder setResponseFormat(String responseFormat){
-            Element eResponseFormat = Request.this.body.createElement("ResponseFormat");
-            eResponseFormat.appendChild(Request.this.body.createTextNode(responseFormat));
-            NodeList tmp = Request.this.body.getElementsByTagName("Request");
-            tmp.item(0).appendChild(eResponseFormat);
-            return this;
+        public Builder setResponseFormat(String format){
+            return setRequestElement("ResponseFormat", format);
         }
 
-        public Builder setRequestElement(String tag, String value){
+        private Builder setRequestElement(String tag, String value){
             Element element = Request.this.body.createElement(tag);
             element.appendChild(Request.this.body.createTextNode(value));
             NodeList tmp = Request.this.body.getElementsByTagName("Request");
@@ -174,7 +118,7 @@ public class Request {
             return this;
         }
 
-        public Builder setOrderElement(String tag, String value){
+        private Builder setOrderElement(String tag, String value){
             Element element = Request.this.body.createElement(tag);
             element.appendChild(Request.this.body.createTextNode(value));
             NodeList tmp = Request.this.body.getElementsByTagName("Order");
