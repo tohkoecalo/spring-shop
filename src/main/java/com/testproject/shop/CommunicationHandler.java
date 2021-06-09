@@ -27,13 +27,8 @@ public class CommunicationHandler {
     private static final String URL = "10.77.201.18:5556/execpwd";
     private static final String MERCHANT = "REPLACE_ME";
     private static final String PASSWORD = "REPLACE_ME";
-    private static final String HTTP_METHOD_POST = "POST";
-    private static final String CONTENT_TYPE_PROPERTY = "Content-Type";
-    private static final String CONTENT_TYPE_PROPERTY_XML = "text/xml";
-    private static final String ALGORITHM_SHA_256 = "SHA-256";
-    private static final String CHARSET_UTF_8 = "utf-8";
 
-    public String sendRequest(String body) { //Methods sends only HTTP POST request
+    public String sendRequest(String body) { //Methods sends only HTTP POST request on constant url
         try {
             URL rUrl = new URL(URL);
             HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
@@ -106,7 +101,7 @@ public class CommunicationHandler {
     private String sha256(String original) { //Found on StackOverflow, chosen because does not use any external libs
         byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
         try {
-            MessageDigest digest = MessageDigest.getInstance(ALGORITHM_SHA_256);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(original.getBytes(StandardCharsets.UTF_8));
             byte[] hexChars = new byte[hash.length * 2];
             for (int j = 0; j < hash.length; j++) {
