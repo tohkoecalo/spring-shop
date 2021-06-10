@@ -39,7 +39,7 @@ public class PhantomDataBase {
     public List<Product> getCatalog(){
         List<Product> content = new ArrayList<>();
         for (int i = 1; i < 5; i++){
-            content.add(new Product(i, "Product #" + i, "Description of Product #" + i, PRICE.values()[i].getValue()));
+            content.add(new Product(i, "Product #" + i, "Description of Product #" + i, PRICE.values()[i - 1].getValue()));
         }
         return content;
     }
