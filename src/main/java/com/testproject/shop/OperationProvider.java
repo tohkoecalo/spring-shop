@@ -1,7 +1,12 @@
 package com.testproject.shop;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import java.util.Map;
 
+@Service
+@Scope("singleton")
 public class OperationProvider {
     private static final String LANGUAGE = "RU";
     private static final String MERCHANT = "POS_1";
@@ -16,7 +21,7 @@ public class OperationProvider {
     private String cvv2;
     private String pareq;
 
-    private OperationProvider(){
+    public OperationProvider(){
         this.amount = "";
         this.orderId = "0";
         this.sessionId = "0";
@@ -26,13 +31,13 @@ public class OperationProvider {
         this.pareq = "";
     }
 
-    private static class CommunicatorHolder{
+    /*private static class CommunicatorHolder{
         private final static OperationProvider instance = new OperationProvider();
     }
 
     public static OperationProvider getInstance(){
         return OperationProvider.CommunicatorHolder.instance;
-    }
+    }*/
 
     public String createOrder(String amount){//need auth data
         this.amount = amount;
@@ -79,7 +84,7 @@ public class OperationProvider {
         return false;
     }
 
-    public String getPAReqForm() {
+    public String getPAReqForm() {// нужен урл редирект на сайт магазина
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.GET_PAREQ_FORM.getValue());
         builder.setMerchant(MERCHANT);

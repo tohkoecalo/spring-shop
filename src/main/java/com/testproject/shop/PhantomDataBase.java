@@ -1,8 +1,13 @@
 package com.testproject.shop;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
+@Scope("singleton")
 public class PhantomDataBase {
     private enum PRICE {
         First(1.99), Second(1.19), Third(0.69), Fourth(2.29);
@@ -16,11 +21,11 @@ public class PhantomDataBase {
         public double getValue(){ return value; }
     }
 
-    private PhantomDataBase(){}
+    public PhantomDataBase(){}
 
-    private static class InstanceHolder{
+    /*private static class InstanceHolder{
         private final static PhantomDataBase instance = new PhantomDataBase();
-    }
+    }*/
 
     private static class Cart{
         private static List<Product> cart = new ArrayList<>();
@@ -32,9 +37,9 @@ public class PhantomDataBase {
         }
     }
 
-    public static PhantomDataBase getInstance(){
+    /*public static PhantomDataBase getInstance(){
         return InstanceHolder.instance;
-    }
+    }*/
 
     public List<Product> getCatalog(){
         List<Product> content = new ArrayList<>();
