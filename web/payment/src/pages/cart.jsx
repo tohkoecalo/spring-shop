@@ -57,7 +57,12 @@ class CartPage extends React.Component {
                     </tbody>
                 </table>
                 <div class="cart-button">
-                    <Link to="/payment" class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-success cart-button">Purchase</button></Link>
+                    <Link to={{
+                        pathname: "/payment",
+                        state: {
+                            amount: "10"
+                        }
+                    }} class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-success cart-button">Purchase</button></Link>
                     <button type="button" class="btn btn-outline-danger cart-button" onClick={() => this.clearCart()}>Clear</button>
                 </div>
             </>

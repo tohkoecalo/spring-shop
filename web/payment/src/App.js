@@ -31,7 +31,7 @@ class App extends React.Component {
               <Switch>
                 <Route path="/cart" component={CartPage}></Route>
                 <Route path="/catalog" component={CatalogPage}></Route>
-                <Route path="/payment" component={PaymentPage}></Route>
+                <Route name="payment" component={PaymentPage}></Route>
                 <Redirect to="/catalog"></Redirect>
               </Switch>
             </div>
