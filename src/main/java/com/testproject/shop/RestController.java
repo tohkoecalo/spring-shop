@@ -42,6 +42,13 @@ public class RestController {
     @PostMapping(path="/order/create")
     public @ResponseBody void createOrder(@RequestBody Order order) {
         provider.createOrder(order);
+        String status = "Wrong";
+        if (provider.check3ds()){
+            String redirectUrl = provider.getPAReqForm();
+            status = provider.processPARes();
+        } else {
+            status = provider.purchase();
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

@@ -41,6 +41,14 @@ class CartPage extends React.Component {
             .then(() => window.location.reload(false));
     }
 
+    getCartAmount(){
+        var total = 0;
+        for (var i = 0; i < this.state.cart.length; i++){
+            total += this.state.cart[i].price
+        }
+        return total
+    }
+
     render() {
         if (this.state.isFetching) return <div>Loading...</div>;
         return (
@@ -60,7 +68,7 @@ class CartPage extends React.Component {
                     <Link to={{
                         pathname: "/payment",
                         state: {
-                            amount: "10"
+                            amount: this.getCartAmount()
                         }
                     }} class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-success cart-button">Purchase</button></Link>
                     <button type="button" class="btn btn-outline-danger cart-button" onClick={() => this.clearCart()}>Clear</button>

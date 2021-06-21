@@ -20,8 +20,6 @@ import java.util.Map;
 
 public class CommunicationHandler {
     private static final String URL = "10.77.201.18:5556/execpwd";
-    private static final String MERCHANT = "REPLACE_ME";
-    private static final String PASSWORD = "REPLACE_ME";
 
     public CommunicationHandler(){}
 
