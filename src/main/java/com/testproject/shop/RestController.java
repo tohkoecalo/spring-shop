@@ -40,8 +40,8 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
-    public @ResponseBody void createOrder(@RequestParam(value = "Amount") String amount) {
-        provider.createOrder(amount);
+    public @ResponseBody void createOrder(@RequestBody Order order) {
+        provider.createOrder(order);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

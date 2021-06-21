@@ -4,8 +4,9 @@ import './css/index.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 
-import CardPage from "./pages/cart";
+import CartPage from "./pages/cart";
 import CatalogPage from "./pages/catalog";
+import PaymentPage from "./pages/payment";
 
 class App extends React.Component {
   render() {
@@ -28,8 +29,9 @@ class App extends React.Component {
             </div>
             <div class="container">
               <Switch>
-                <Route path="/cart" component={CardPage}></Route>
+                <Route path="/cart" component={CartPage}></Route>
                 <Route path="/catalog" component={CatalogPage}></Route>
+                <Route path="/payment" component={PaymentPage}></Route>
                 <Redirect to="/catalog"></Redirect>
               </Switch>
             </div>

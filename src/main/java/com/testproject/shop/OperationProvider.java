@@ -16,18 +16,14 @@ public class OperationProvider {
     private String amount;
     private String orderId;
     private String sessionId;
-    private String pan;
-    private String expDate;
-    private String cvv2;
+    private Card card;
     private String pareq;
 
     public OperationProvider(){
         this.amount = "";
         this.orderId = "0";
         this.sessionId = "0";
-        this.pan = "";
-        this.expDate = "";
-        this.cvv2 = "";
+        this.card = new Card();
         this.pareq = "";
     }
 
@@ -39,8 +35,10 @@ public class OperationProvider {
         return OperationProvider.CommunicatorHolder.instance;
     }*/
 
-    public String createOrder(String amount){//need auth data
-        this.amount = amount;
+    public String createOrder(Order order){//need auth data
+        this.amount = order.getAmount();
+        this.card = order.getCard();
+
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.CREATE_ORDER.getValue());
         builder.setLanguage(LANGUAGE);
@@ -60,17 +58,13 @@ public class OperationProvider {
         return orderId;
     }
 
-    public boolean check3ds(String orderId, String sessionId, String pan, String expDate, String cvv2) {
-        this.pan = pan;
-        this.expDate = expDate;
-        this.cvv2 = cvv2;
-
+    public boolean check3ds(String orderId, String sessionId) {
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.CHECK_3DS_ENROLLED.getValue());
         builder.setMerchant(MERCHANT);
         builder.setOrderId(orderId);
         builder.setSessionId(sessionId);
-        builder.setPAN(this.pan);
+        builder.setPAN(this.card.getNumber());
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
@@ -90,10 +84,8 @@ public class OperationProvider {
         builder.setMerchant(MERCHANT);
         builder.setOrderId(orderId);
         builder.setSessionId(sessionId);
-        builder.setPAN(pan);
-
-        builder.setExpDate(expDate);
-        this.expDate = expDate;
+        builder.setPAN(this.card.getNumber());
+        builder.setExpDate(this.card.getExpMonth() + "/" + this.card.getExpYear());
         builder.setEncodedPAReq("true");
         RequestBody rq = builder.build();
 
@@ -115,9 +107,9 @@ public class OperationProvider {
         builder.setOrderId(orderId);
         builder.setSessionId(sessionId);
         builder.setPARes(pareq);
-        builder.setPAN(pan);
-        builder.setExpDate(expDate);
-        builder.setCVV2(cvv2);
+        builder.setPAN(this.card.getNumber());
+        builder.setExpDate(this.card.getExpMonth() + "/" + this.card.getExpYear());
+        builder.setCVV2(this.card.getCvv());
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
@@ -137,9 +129,9 @@ public class OperationProvider {
         builder.setSessionId(sessionId);
         builder.setAmount(amount);
         builder.setCurrency(CURRENCY);
-        builder.setPAN(pan);
-        builder.setExpDate(expDate);
-        builder.setCVV2(cvv2);
+        builder.setPAN(this.card.getNumber());
+        builder.setExpDate(this.card.getExpMonth() + "/" + this.card.getExpYear());
+        builder.setCVV2(this.card.getCvv());
         builder.setResponseFormat(RESPONSE_FORMAT);
         RequestBody rq = builder.build();
 

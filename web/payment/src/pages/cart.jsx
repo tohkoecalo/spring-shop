@@ -1,6 +1,7 @@
 import React from "react";
 import CartRow from "../components/CartRow"
 import '../css/index.css';
+import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 
 class CartPage extends React.Component {
     constructor(props) {
@@ -28,7 +29,7 @@ class CartPage extends React.Component {
             });
     }
 
-    renderCard = (item, key) => {
+    renderCart = (item, key) => {
         return <CartRow product={item.name} amount={1} price={1 * item.price + "$"} />
     }
 
@@ -36,8 +37,8 @@ class CartPage extends React.Component {
         const requestOptions = {
             method: 'DELETE'
         };
-        fetch("http://localhost:8081/cart", requestOptions);
-        //window.location.reload(false);
+        fetch("http://localhost:8081/cart", requestOptions)
+            .then(() => window.location.reload(false));
     }
 
     render() {
@@ -52,11 +53,11 @@ class CartPage extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.cart.map(this.renderCard)}
+                        {this.state.cart.map(this.renderCart)}
                     </tbody>
                 </table>
                 <div class="cart-button">
-                    <button type="button" class="btn btn-outline-success cart-button">Purchase</button>
+                    <Link to="/payment" class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-success cart-button">Purchase</button></Link>
                     <button type="button" class="btn btn-outline-danger cart-button" onClick={() => this.clearCart()}>Clear</button>
                 </div>
             </>
