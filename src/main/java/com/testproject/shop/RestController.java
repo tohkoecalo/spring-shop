@@ -40,26 +40,26 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
-    public @ResponseBody void createOrder(@RequestBody Order order) {
+    public @ResponseBody String createOrder(@RequestBody Order order) {
         provider.createOrder(order);
-        String status = "Wrong";
+        String redirectDest = "/order/purchase";
         if (provider.check3ds()){
-            String redirectUrl = provider.getPAReqForm();
-            status = provider.processPARes();
-        } else {
-            status = provider.purchase();
+            String[] redirectData = provider.getPAReqForm();
+            redirectDest = redirectData[0];
+            //post on acs with pareq
         }
+        return redirectDest;
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(path="/order/after_issuer")
+    public @ResponseBody String processResp() {
+        return provider.processPARes();
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/purchase", consumes = "application/json")
-    public @ResponseBody void purchase() {//Need card reqs
-        /*String status;
-        if (Communicator.getInstance().check3ds()){
-            String redirectUrl = Communicator.getInstance().getPAReqForm();
-            status = Communicator.getInstance().processPARes();
-        } else {
-            status = Communicator.getInstance().purchase();
-        }*/
+    public @ResponseBody String purchase() {
+        return provider.purchase();
     }
 }

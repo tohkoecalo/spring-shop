@@ -19,23 +19,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommunicationHandler {
-    private static final String URL = "10.77.201.18:5556/execpwd";
+    private static final String TWGP_URL = "10.77.201.18:5556/execpwd";
 
     public CommunicationHandler(){}
 
     public Map<String, String> provideRequest(Document body) {
         Map<String, String> responseDetails = null;
         try {
-            responseDetails = getResponseDataAsMap(sendRequest(Utils.representXmlDocAsString(body)));
+            responseDetails = getResponseDataAsMap(sendRequest(TWGP_URL, Utils.representXmlDocAsString(body)));
         } catch (Exception e){
             e.printStackTrace();
         }
         return responseDetails;
     }
 
-    private String sendRequest(String body) { //Methods sends only HTTP POST request on constant url
+    private String sendRequest(String url, String body) { //Methods sends only HTTP POST request
         try {
-            URL rUrl = new URL(URL);
+            URL rUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
             connection.setRequestMethod(HttpMethod.POST.toString());
             connection.setDoOutput(true);

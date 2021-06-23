@@ -22,7 +22,7 @@ public class OperationProvider {
         this.pareq = "";
     }
 
-    public void createOrder(Order order){//need auth data
+    public void createOrder(Order order){//need auth data tag
         this.order = order;
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.CREATE_ORDER.getValue());
@@ -61,7 +61,7 @@ public class OperationProvider {
         return false;
     }
 
-    public String getPAReqForm() {// нужен урл редирект на сайт магазина
+    public String[] getPAReqForm() {// нужен урл редирект на сайт магазина
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.GET_PAREQ_FORM.getValue());
         builder.setMerchant(MERCHANT);
@@ -75,10 +75,10 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
 
-        String result = "";
+        String result[] = new String[2];
         if (Utils.isResponseSuccess(responseDetails)) {
-            result = responseDetails.get("url");
-            pareq = responseDetails.get("pareq");
+            result[0] = responseDetails.get("url");
+            result[1] = responseDetails.get("pareq");
         }
         return result;
     }
@@ -125,5 +125,9 @@ public class OperationProvider {
             return responseDetails.get("OrderStatus");
         }
         return "Process went wrong";
+    }
+
+    public void redirectToIssuer(String url, String pareq){
+        //todo
     }
 }
