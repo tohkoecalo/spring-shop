@@ -35,10 +35,10 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
-        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
+        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
         try {
-            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
         } catch (TransformerException e){
             e.printStackTrace();
@@ -61,8 +61,8 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
-        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
+        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -91,8 +91,8 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
-        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
+        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -122,8 +122,8 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
-        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
+        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -153,8 +153,8 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
-        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
+        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));

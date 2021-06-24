@@ -10,6 +10,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,8 +21,12 @@ import org.apache.commons.text.StringEscapeUtils;
 public class Utils {
 
     public static String escapeSymbols(String sourceStr){
-        //return  sourceStr;
-        return StringEscapeUtils.escapeXml10(sourceStr);
+        try {
+            return URLEncoder.encode(sourceStr, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public static String representXmlDocAsString(Document document) throws TransformerException {

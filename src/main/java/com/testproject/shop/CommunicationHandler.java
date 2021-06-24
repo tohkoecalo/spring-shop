@@ -23,10 +23,9 @@ public class CommunicationHandler {
 
     public CommunicationHandler(){}
 
-    public Map<String, String> provideRequest(RequestParameter... params) {
+    public Map<String, String> provideRequest(RequestBody.RequestParameter... params) {
         Map<String, String> responseDetails = null;
         try {
-
             responseDetails = getResponseDataAsMap(sendRequest(TWGP_URL, params));//Utils.representXmlDocAsString(body)
         } catch (Exception e){
             e.printStackTrace();
@@ -34,10 +33,10 @@ public class CommunicationHandler {
         return responseDetails;
     }
 
-    private String sendRequest(String url, RequestParameter... params) { //Methods sends only HTTP POST request
+    private String sendRequest(String url, RequestBody.RequestParameter... params) { //Methods sends only HTTP POST request
         StringBuilder body = new StringBuilder();
-        for (RequestParameter param : params){
-            body.append(param.getKey()).append("=").append(param.getValue()).append("&");
+        for (RequestBody.RequestParameter param : params){
+            body.append(param.getKey()).append("=").append(Utils.escapeSymbols(param.getValue())).append("&");
         }
         body.deleteCharAt(body.length() - 1);
         try {
@@ -95,31 +94,5 @@ public class CommunicationHandler {
                 textContent.append(child.getTextContent());
         }
         return textContent.toString();
-    }
-
-    public class RequestParameter {
-        private String key;
-        private String value;
-
-        public RequestParameter(String key, String value){
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
     }
 }
