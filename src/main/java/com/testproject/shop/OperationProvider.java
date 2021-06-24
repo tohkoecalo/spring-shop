@@ -3,14 +3,15 @@ package com.testproject.shop;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import javax.xml.transform.TransformerException;
 import java.util.Map;
 
 @Service
 @Scope("singleton")
 public class OperationProvider {
     private static final String LANGUAGE = "RU";
-    private static final String MERCHANT = "REPLACE_ME";
-    private static final String PASSWORD = "REPLACE_ME";
+    private static final String MERCHANT = "POS_1";
+    private static final String PASSWORD = "12345";
     private static final String CURRENCY = "643";
     private static final String RESPONSE_FORMAT = "TKKPG";
 
@@ -22,7 +23,7 @@ public class OperationProvider {
         this.pareq = "";
     }
 
-    public void createOrder(Order order){//need auth data tag
+    public void createOrder(Order order){
         this.order = order;
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.CREATE_ORDER.getValue());
@@ -30,11 +31,20 @@ public class OperationProvider {
         builder.setMerchant(MERCHANT);
         builder.setAmount(order.getAmount());
         builder.setCurrency(CURRENCY);
+        builder.setDescription("TEST");
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
+        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
+        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        try {
+            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+        } catch (TransformerException e){
+            e.printStackTrace();
+        }
 
+        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             this.order.setOrderId(responseDetails.get("OrderID"));
             this.order.setSessionId(responseDetails.get("SessionID"));
@@ -51,8 +61,16 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
+        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
+        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        try {
+            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+        } catch (TransformerException e){
+            e.printStackTrace();
+        }
 
+        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             if (responseDetails.get("enrolled").equals("Y")){
                 return true;
@@ -61,7 +79,7 @@ public class OperationProvider {
         return false;
     }
 
-    public String[] getPAReqForm() {// нужен урл редирект на сайт магазина
+    public String[] getPAReqForm() {
         RequestBody.Builder builder = RequestBody.newBuilder();
         builder.setOperation(RequestBody.Operation.GET_PAREQ_FORM.getValue());
         builder.setMerchant(MERCHANT);
@@ -73,8 +91,16 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
+        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
+        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        try {
+            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
+            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+        } catch (TransformerException e){
+            e.printStackTrace();
+        }
 
+        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
         String result[] = new String[2];
         if (Utils.isResponseSuccess(responseDetails)) {
             result[0] = responseDetails.get("url");
@@ -96,8 +122,16 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
+        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
+        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        try {
+            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+        } catch (TransformerException e){
+            e.printStackTrace();
+        }
 
+        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             return responseDetails.get("OrderStatus");
         }
@@ -119,8 +153,16 @@ public class OperationProvider {
         RequestBody rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        Map<String, String> responseDetails = ch.provideRequest(rq.getBody());
+        CommunicationHandler.RequestParameter xmlRequestParam = ch.new RequestParameter("xmlRequest", "");
+        CommunicationHandler.RequestParameter authDataParam = ch.new RequestParameter("authData", "");
+        try {
+            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+        } catch (TransformerException e){
+            e.printStackTrace();
+        }
 
+        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             return responseDetails.get("OrderStatus");
         }

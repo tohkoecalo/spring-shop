@@ -19,34 +19,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommunicationHandler {
-    private static final String TWGP_URL = "10.77.201.18:5556/execpwd";
+    private static final String TWGP_URL = "http://10.77.201.18:5556/execpwd";
 
     public CommunicationHandler(){}
 
-    public Map<String, String> provideRequest(Document body) {
+    public Map<String, String> provideRequest(RequestParameter... params) {
         Map<String, String> responseDetails = null;
         try {
-            responseDetails = getResponseDataAsMap(sendRequest(TWGP_URL, Utils.representXmlDocAsString(body)));
+
+            responseDetails = getResponseDataAsMap(sendRequest(TWGP_URL, params));//Utils.representXmlDocAsString(body)
         } catch (Exception e){
             e.printStackTrace();
         }
         return responseDetails;
     }
 
-    private String sendRequest(String url, String body) { //Methods sends only HTTP POST request
+    private String sendRequest(String url, RequestParameter... params) { //Methods sends only HTTP POST request
+        StringBuilder body = new StringBuilder();
+        for (RequestParameter param : params){
+            body.append(param.getKey()).append("=").append(param.getValue()).append("&");
+        }
+        body.deleteCharAt(body.length() - 1);
         try {
             URL rUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
             connection.setRequestMethod(HttpMethod.POST.toString());
             connection.setDoOutput(true);
-            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML.toString());
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
             OutputStream os = connection.getOutputStream();
-            byte[] input = body.getBytes(StandardCharsets.UTF_8);
+            byte[] input = Utils.escapeSymbols(body.toString()).getBytes("UTF-8");
             os.write(input, 0, input.length);
             DataOutputStream wr = null;
             wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(body);
+            wr.writeBytes(body.toString());
             wr.flush();
             wr.close();
 
@@ -89,5 +95,31 @@ public class CommunicationHandler {
                 textContent.append(child.getTextContent());
         }
         return textContent.toString();
+    }
+
+    public class RequestParameter {
+        private String key;
+        private String value;
+
+        public RequestParameter(String key, String value){
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }

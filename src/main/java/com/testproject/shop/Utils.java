@@ -14,8 +14,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class Utils {
+
+    public static String escapeSymbols(String sourceStr){
+        //return  sourceStr;
+        return StringEscapeUtils.escapeXml10(sourceStr);
+    }
+
     public static String representXmlDocAsString(Document document) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
@@ -35,6 +42,10 @@ public class Utils {
             e.printStackTrace();
         }
         return null; //Never returns, so ok
+    }
+
+    public static String getAuthToken(String xmlRequest, String merchant, String password){
+        return sha256(sha256(xmlRequest) + "/" + sha256(merchant + "/" + password));
     }
 
     public static String sha256(String original) { //Found on StackOverflow, chosen because does not use any external libs

@@ -40,6 +40,7 @@ public class RequestBody {
                 DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
                 RequestBody.this.body = documentBuilder.newDocument();
+                RequestBody.this.body.setXmlVersion("1.0");
 
                 Element root = RequestBody.this.body.createElement("TKKPG");
                 RequestBody.this.body.appendChild(root);
@@ -125,24 +126,6 @@ public class RequestBody {
             tmp.item(0).appendChild(element);
             return this;
         }
-
-        /*
-        * Operation - above order block +
-        * Language - above order block +
-        * Merchant - order block +
-        * Amount - order block +
-        * Currency - order block +
-        * Description - order block +
-        * OrderID - order block +
-        * SessionID - below order block +
-        * PAN - below order block +
-        * ExpDate - below order block +
-        * EncodedPAReq - below order block +
-        * PARes - below order block +
-        * CVV2 - below order block +
-        * ResponseFormat - below order block +
-        * authData -mb
-        * */
 
         public RequestBody build(){
             return RequestBody.this;
