@@ -2,7 +2,6 @@ package com.testproject.shop;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,42 +17,38 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommunicationHandler {
-    private static final String TWGP_URL = "http://10.77.201.18:5556/execpwd";
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
+public class CommunicationHandler {
     public CommunicationHandler(){}
 
-    public Map<String, String> provideRequest(RequestBody.RequestParameter... params) {
+    public Map<String, String> provideRequest(String url, RequestParameter... params) {
         Map<String, String> responseDetails = null;
         try {
-            responseDetails = getResponseDataAsMap(sendRequest(TWGP_URL, params));//Utils.representXmlDocAsString(body)
+            responseDetails = getResponseDataAsMap(sendRequest(url, params));//Utils.representXmlDocAsString(body)
         } catch (Exception e){
             e.printStackTrace();
         }
         return responseDetails;
     }
 
-    private String sendRequest(String url, RequestBody.RequestParameter... params) { //Methods sends only HTTP POST request
+    private String sendRequest(String url, RequestParameter... params) { //Methods sends only HTTP POST request
         StringBuilder body = new StringBuilder();
-        for (RequestBody.RequestParameter param : params){
-            body.append(param.getKey()).append("=").append(Utils.escapeSymbols(param.getValue())).append("&");
+        for (RequestParameter param : params){
+            body.append(Utils.escapeSymbols(param.getKey())).append("=").append(Utils.escapeSymbols(param.getValue())).append("&");
         }
         body.deleteCharAt(body.length() - 1);
         try {
             URL rUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
             connection.setRequestMethod(HttpMethod.POST.toString());
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, APPLICATION_FORM_URLENCODED.toString());
             connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
-            OutputStream os = connection.getOutputStream();
-            byte[] input = Utils.escapeSymbols(body.toString()).getBytes("UTF-8");
-            os.write(input, 0, input.length);
-            DataOutputStream wr = null;
-            wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(body.toString());
-            wr.flush();
-            wr.close();
+            try(OutputStream os = connection.getOutputStream()) {
+                byte[] input = body.toString().getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
 
             BufferedReader reader = null;
             StringBuilder stringBuilder;

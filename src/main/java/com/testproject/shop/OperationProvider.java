@@ -4,11 +4,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.xml.transform.TransformerException;
+import java.util.Base64;
 import java.util.Map;
 
 @Service
 @Scope("singleton")
 public class OperationProvider {
+    private static final String TWGP_URL = "http://10.77.201.18:5556/execpwd";
     private static final String LANGUAGE = "RU";
     private static final String MERCHANT = "POS_1";
     private static final String PASSWORD = "12345";
@@ -23,20 +25,20 @@ public class OperationProvider {
         this.pareq = "";
     }
 
-    public void createOrder(Order order){
+    public String createOrder(Order order){
         this.order = order;
-        RequestBody.Builder builder = RequestBody.newBuilder();
-        builder.setOperation(RequestBody.Operation.CREATE_ORDER.getValue());
+        XmlRequest.Builder builder = XmlRequest.newBuilder();
+        builder.setOperation(XmlRequest.Operation.CREATE_ORDER.getValue());
         builder.setLanguage(LANGUAGE);
         builder.setMerchant(MERCHANT);
         builder.setAmount(order.getAmount());
         builder.setCurrency(CURRENCY);
         builder.setDescription("TEST");
-        RequestBody rq = builder.build();
+        XmlRequest rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
-        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
+        RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
+        RequestParameter authDataParam = new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -44,33 +46,36 @@ public class OperationProvider {
             e.printStackTrace();
         }
 
-        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
+        Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
+        String status = "Create order process went wrong";
         if (Utils.isResponseSuccess(responseDetails)) {
             this.order.setOrderId(responseDetails.get("OrderID"));
             this.order.setSessionId(responseDetails.get("SessionID"));
+            status = "Success";
         }
+        return status;
     }
 
     public boolean check3ds() {
-        RequestBody.Builder builder = RequestBody.newBuilder();
-        builder.setOperation(RequestBody.Operation.CHECK_3DS_ENROLLED.getValue());
+        XmlRequest.Builder builder = XmlRequest.newBuilder();
+        builder.setOperation(XmlRequest.Operation.CHECK_3DS_ENROLLED.getValue());
         builder.setMerchant(MERCHANT);
         builder.setOrderId(order.getOrderId());
         builder.setSessionId(order.getSessionId());
         builder.setPAN(order.getCard().getNumber());
-        RequestBody rq = builder.build();
+        XmlRequest rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
-        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
+        RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
+        RequestParameter authDataParam = new RequestParameter("authData", "");
         try {
-            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
         } catch (TransformerException e){
             e.printStackTrace();
         }
 
-        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
+        Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             if (responseDetails.get("enrolled").equals("Y")){
                 return true;
@@ -80,19 +85,19 @@ public class OperationProvider {
     }
 
     public String[] getPAReqForm() {
-        RequestBody.Builder builder = RequestBody.newBuilder();
-        builder.setOperation(RequestBody.Operation.GET_PAREQ_FORM.getValue());
+        XmlRequest.Builder builder = XmlRequest.newBuilder();
+        builder.setOperation(XmlRequest.Operation.GET_PAREQ_FORM.getValue());
         builder.setMerchant(MERCHANT);
         builder.setOrderId(order.getOrderId());
-        builder.setSessionId(order.getOrderId());
+        builder.setSessionId(order.getSessionId());
         builder.setPAN(order.getCard().getNumber());
         builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
         builder.setEncodedPAReq("true");
-        RequestBody rq = builder.build();
+        XmlRequest rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
-        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
+        RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
+        RequestParameter authDataParam = new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -100,30 +105,43 @@ public class OperationProvider {
             e.printStackTrace();
         }
 
-        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
+        Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         String result[] = new String[2];
         if (Utils.isResponseSuccess(responseDetails)) {
             result[0] = responseDetails.get("url");
             result[1] = responseDetails.get("pareq");
+            pareq = responseDetails.get("pareq");
         }
         return result;
     }
 
-    public String processPARes() {
-        RequestBody.Builder builder = RequestBody.newBuilder();
-        builder.setOperation(RequestBody.Operation.PROCESS_PARES.getValue());
+    public void redirectToIssuer(String url){
+        CommunicationHandler ch = new CommunicationHandler();
+        RequestParameter mdParam = new RequestParameter("MD", Base64.getEncoder().encodeToString(order.getOrderId().getBytes()));
+        RequestParameter termUrlParam = new RequestParameter("TermUrl", "http://localhost:3000/order/after_issuer");
+        RequestParameter pareqParam = new RequestParameter("pareq", pareq);
+
+        Map<String, String> responseDetails = ch.provideRequest(url, mdParam, termUrlParam, pareqParam);
+        if (Utils.isResponseSuccess(responseDetails)) {
+            String status = responseDetails.get("OrderStatus");
+        }
+    }
+
+    public String processPARes(String pares) {
+        XmlRequest.Builder builder = XmlRequest.newBuilder();
+        builder.setOperation(XmlRequest.Operation.PROCESS_PARES.getValue());
         builder.setMerchant(MERCHANT);
         builder.setOrderId(order.getOrderId());
-        builder.setSessionId(order.getOrderId());
-        builder.setPARes(pareq);
+        builder.setSessionId(order.getSessionId());
+        builder.setPARes(pares);
         builder.setPAN(order.getCard().getNumber());
         builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
         builder.setCVV2(order.getCard().getCvv());
-        RequestBody rq = builder.build();
+        XmlRequest rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
-        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
+        RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
+        RequestParameter authDataParam = new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -131,7 +149,7 @@ public class OperationProvider {
             e.printStackTrace();
         }
 
-        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
+        Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             return responseDetails.get("OrderStatus");
         }
@@ -139,8 +157,8 @@ public class OperationProvider {
     }
 
     public String purchase() {
-        RequestBody.Builder builder = RequestBody.newBuilder();
-        builder.setOperation(RequestBody.Operation.PURCHASE.getValue());
+        XmlRequest.Builder builder = XmlRequest.newBuilder();
+        builder.setOperation(XmlRequest.Operation.PURCHASE.getValue());
         builder.setMerchant(MERCHANT);
         builder.setOrderId(order.getOrderId());
         builder.setSessionId(order.getSessionId());
@@ -150,11 +168,11 @@ public class OperationProvider {
         builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
         builder.setCVV2(order.getCard().getCvv());
         builder.setResponseFormat(RESPONSE_FORMAT);
-        RequestBody rq = builder.build();
+        XmlRequest rq = builder.build();
 
         CommunicationHandler ch = new CommunicationHandler();
-        RequestBody.RequestParameter xmlRequestParam = rq.new RequestParameter("xmlRequest", "");
-        RequestBody.RequestParameter authDataParam = rq.new RequestParameter("authData", "");
+        RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
+        RequestParameter authDataParam = new RequestParameter("authData", "");
         try {
             xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
             authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
@@ -162,14 +180,10 @@ public class OperationProvider {
             e.printStackTrace();
         }
 
-        Map<String, String> responseDetails = ch.provideRequest(authDataParam, xmlRequestParam);
+        Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
             return responseDetails.get("OrderStatus");
         }
         return "Process went wrong";
-    }
-
-    public void redirectToIssuer(String url, String pareq){
-        //todo
     }
 }

@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class RequestBody {
+public class XmlRequest {
     public enum Operation {
         CREATE_ORDER("CreateOrder"), CHECK_3DS_ENROLLED("Check3DSEnrolled"), GET_PAREQ_FORM("GetPAReqForm"),
         PROCESS_PARES("ProcessPARes"), PURCHASE("Purchase");
@@ -24,14 +24,14 @@ public class RequestBody {
 
     private Document body;
 
-    private RequestBody(){}
+    private XmlRequest(){}
 
     public Document getBody(){
         return body;
     }
 
     public static Builder newBuilder() {
-        return new RequestBody().new Builder();
+        return new XmlRequest().new Builder();
     }
 
     public class Builder{
@@ -39,16 +39,16 @@ public class RequestBody {
             try {
                 DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-                RequestBody.this.body = documentBuilder.newDocument();
-                RequestBody.this.body.setXmlVersion("1.0");
+                XmlRequest.this.body = documentBuilder.newDocument();
+                XmlRequest.this.body.setXmlVersion("1.0");
 
-                Element root = RequestBody.this.body.createElement("TKKPG");
-                RequestBody.this.body.appendChild(root);
+                Element root = XmlRequest.this.body.createElement("TKKPG");
+                XmlRequest.this.body.appendChild(root);
 
-                Element request = RequestBody.this.body.createElement("Request");
+                Element request = XmlRequest.this.body.createElement("Request");
                 root.appendChild(request);
 
-                Element order = RequestBody.this.body.createElement("Order");
+                Element order = XmlRequest.this.body.createElement("Order");
                 request.appendChild(order);
             } catch (ParserConfigurationException e){
                 e.printStackTrace();
@@ -112,48 +112,23 @@ public class RequestBody {
         }
 
         private Builder setRequestElement(String tag, String value){
-            Element element = RequestBody.this.body.createElement(tag);
-            element.appendChild(RequestBody.this.body.createTextNode(value));
-            NodeList tmp = RequestBody.this.body.getElementsByTagName("Request");
+            Element element = XmlRequest.this.body.createElement(tag);
+            element.appendChild(XmlRequest.this.body.createTextNode(value));
+            NodeList tmp = XmlRequest.this.body.getElementsByTagName("Request");
             tmp.item(0).appendChild(element);
             return this;
         }
 
         private Builder setOrderElement(String tag, String value){
-            Element element = RequestBody.this.body.createElement(tag);
-            element.appendChild(RequestBody.this.body.createTextNode(value));
-            NodeList tmp = RequestBody.this.body.getElementsByTagName("Order");
+            Element element = XmlRequest.this.body.createElement(tag);
+            element.appendChild(XmlRequest.this.body.createTextNode(value));
+            NodeList tmp = XmlRequest.this.body.getElementsByTagName("Order");
             tmp.item(0).appendChild(element);
             return this;
         }
 
-        public RequestBody build(){
-            return RequestBody.this;
-        }
-    }
-    public class RequestParameter {
-        private String key;
-        private String value;
-
-        public RequestParameter(String key, String value){
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
+        public XmlRequest build(){
+            return XmlRequest.this;
         }
     }
 }
