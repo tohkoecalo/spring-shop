@@ -118,8 +118,8 @@ public class OperationProvider {
     public void redirectToIssuer(String url){
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter mdParam = new RequestParameter("MD", Base64.getEncoder().encodeToString(order.getOrderId().getBytes()));
-        RequestParameter termUrlParam = new RequestParameter("TermUrl", "http://localhost:3000/order/after_issuer");
-        RequestParameter pareqParam = new RequestParameter("pareq", pareq);
+        RequestParameter termUrlParam = new RequestParameter("TermUrl", "http://localhost:3000/order/issuer_redirect");
+        RequestParameter pareqParam = new RequestParameter("PaReq", pareq);
 
         Map<String, String> responseDetails = ch.provideRequest(url, mdParam, termUrlParam, pareqParam);
         if (Utils.isResponseSuccess(responseDetails)) {

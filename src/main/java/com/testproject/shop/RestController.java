@@ -41,14 +41,13 @@ public class RestController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
     public @ResponseBody String createOrder(@RequestBody Order order) {
-        String redirectDest = "http://localhost:3000/order/purchase";
+        String redirectDest = "http://localhost:3000/catalog"; //http://localhost:3000/order/purchase
         if (provider.createOrder(order).equals("Success")){
-            redirectDest = "/order/purchase";
             if (provider.check3ds()){
                 String[] formData = provider.getPAReqForm();
                 redirectDest = formData[0];
                 String pareq = formData[1];
-                //provider.redirectToIssuer(redirectDest);
+                provider.redirectToIssuer(redirectDest);
             }
         }
         return redirectDest;
@@ -57,8 +56,7 @@ public class RestController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path="/order/after_issuer")
     public @ResponseBody String processResp() {
-        return "Test";
-        //return provider.processPARes("test");
+        return provider.processPARes("test");
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
