@@ -44,15 +44,21 @@ class PaymentPage extends React.Component {
         this.setState({ card: card });
       }
 
-    sendCardInfo() {
+    createOrder() {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: this.state.amount, card: this.state.card })/* card: {number: "1", expMonth: "12", expYear: "123", cvv: "1233"} */
+            body: JSON.stringify({ amount: this.state.amount, card: this.state.card })
           };
           fetch("http://localhost:8081/order/create", requestOptions)
+            .then(function(response) {
+                return response.text();
+            }) 
+            .then(function(text) {
+                window.location.href = text
+            })
     }
-
+    
     render() {
         return (
             <>
@@ -71,7 +77,7 @@ class PaymentPage extends React.Component {
                     <span class="input-group-text">CVV</span>
                     <input type="number" class="form-control" onChange={this.handleCardCvvChanged.bind(this)}/>
                 </div>
-                <button type="button" class="btn btn-outline-success cart-button" onClick={() => this.sendCardInfo()}>Pay</button>
+                <button type="button" class="btn btn-outline-success cart-button" onClick={() => this.createOrder()}>Pay</button>
                 <Link to="/catalog" class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-danger cart-button">Cancel</button></Link>
             </>
         );

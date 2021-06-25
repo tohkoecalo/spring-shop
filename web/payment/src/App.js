@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-ro
 import CartPage from "./pages/cart";
 import CatalogPage from "./pages/catalog";
 import PaymentPage from "./pages/payment";
+import AfterIssuerPage from "./pages/after_issuer";
+import OrderStatus from "./pages/status";
 
 class App extends React.Component {
   render() {
@@ -31,6 +33,8 @@ class App extends React.Component {
               <Switch>
                 <Route path="/cart" component={CartPage}></Route>
                 <Route path="/catalog" component={CatalogPage}></Route>
+                <Route path="/issuer_redirect" component={AfterIssuerPage}></Route>
+                <Route path="/status" component={OrderStatus}></Route>
                 <Route name="payment" component={PaymentPage}></Route>
                 <Redirect to="/catalog"></Redirect>
               </Switch>
