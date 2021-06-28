@@ -44,7 +44,8 @@ class PaymentPage extends React.Component {
         this.setState({ card: card });
       }
 
-    createOrder() {
+    createOrderAndCheck3ds() { //window.location.href = text
+        var is3dsEnrolled = 'fasle';
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,8 +56,45 @@ class PaymentPage extends React.Component {
                 return response.text();
             }) 
             .then(function(text) {
-                window.location.href = text
+                if (text == 'true'){
+                    is3dsEnrolled = true;
+
+                }
             })
+        return is3dsEnrolled;
+    }
+
+    getPareq(nextUrl, md, termUrl, pareq){//pares!!
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
+            body: 'MD=' + encodeURIComponent(window.btoa(md)) + '&TermUrl=' + encodeURIComponent(termUrl) + '&Pareq=' + encodeURIComponent(pareq)
+        };
+        fetch(nextUrl, requestOptions)
+        //    .then(function(response) {
+        //        return response.text();
+        //    }) 
+        //fetch processpares
+
+        
+    }
+
+    runPurchase(){
+        if (this.is3dsEnrolled){
+            fetch("http://localhost:8081/order/getpareq")
+                .then(function(response){
+                    return response.json();
+                })
+                .then(function(json){
+                    var redirectUrl = "http://localhost:3000/issuer_redirect";
+                    this.getPareq(json.url, json.md, redirectUrl, json.pareq);
+                })
+        } else {
+            fetch("http://localhost:8081/order/purchase")
+                .then(function(response){
+                    return response.text()
+                })
+        }
     }
     
     render() {

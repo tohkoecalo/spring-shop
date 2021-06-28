@@ -25,6 +25,10 @@ public class OperationProvider {
         this.pareq = "";
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
     public String createOrder(Order order){
         this.order = order;
         XmlRequest.Builder builder = XmlRequest.newBuilder();
