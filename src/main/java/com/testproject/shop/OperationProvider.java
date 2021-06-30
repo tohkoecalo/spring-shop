@@ -95,7 +95,7 @@ public class OperationProvider {
         builder.setOrderId(order.getOrderId());
         builder.setSessionId(order.getSessionId());
         builder.setPAN(order.getCard().getNumber());
-        builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
+        builder.setExpDate(order.getCard().getExpiry());
         builder.setEncodedPAReq("true");
         XmlRequest rq = builder.build();
 
@@ -139,7 +139,7 @@ public class OperationProvider {
         builder.setSessionId(order.getSessionId());
         builder.setPARes(pares);
         builder.setPAN(order.getCard().getNumber());
-        builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
+        builder.setExpDate(order.getCard().getExpiry());
         builder.setCVV2(order.getCard().getCvv());
         XmlRequest rq = builder.build();
 
@@ -169,7 +169,7 @@ public class OperationProvider {
         builder.setAmount(order.getAmount());
         builder.setCurrency(CURRENCY);
         builder.setPAN(order.getCard().getNumber());
-        builder.setExpDate(order.getCard().getExpYear() + order.getCard().getExpMonth());
+        builder.setExpDate(order.getCard().getExpiry());
         builder.setCVV2(order.getCard().getCvv());
         builder.setResponseFormat(RESPONSE_FORMAT);
         XmlRequest rq = builder.build();

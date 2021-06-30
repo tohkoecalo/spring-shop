@@ -2,16 +2,14 @@ package com.testproject.shop;
 
 public class Card {
     private String number;
-    private String expMonth;
-    private String expYear;
+    private String expiry;
     private String cvv;
 
     public Card(){}
 
-    public Card(String number, String expMonth, String expYear, String cvv){
+    public Card(String number, String expiry, String cvv){
         this.number = number;
-        this.expMonth = expMonth;
-        this.expYear = expYear;
+        this.expiry = expiry;
         this.cvv = cvv;
     }
 
@@ -19,12 +17,8 @@ public class Card {
         return number;
     }
 
-    public String getExpMonth() {
-        return expMonth;
-    }
-
-    public String getExpYear() {
-        return expYear;
+    public String getExpiry() {
+        return expiry;
     }
 
     public String getCvv() {
@@ -35,13 +29,10 @@ public class Card {
         this.number = number;
     }
 
-    public void setExpMonth(String expMonth) {
-        this.expMonth = expMonth;
+    public void setExpiry(String expiry) {
+        this.expiry = expiry;
     }
 
-    public void setExpYear(String expYear) {
-        this.expYear = expYear;
-    }
 
     public void setCvv(String cvv){
         this.cvv = cvv;

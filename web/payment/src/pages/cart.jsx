@@ -34,6 +34,7 @@ class CartPage extends React.Component {
     }
 
     clearCart() {
+        localStorage.clear();
         const requestOptions = {
             method: 'DELETE'
         };
@@ -41,9 +42,9 @@ class CartPage extends React.Component {
             .then(() => window.location.reload(false));
     }
 
-    getCartAmount(){
+    getCartAmount() {
         var total = 0;
-        for (var i = 0; i < this.state.cart.length; i++){
+        for (var i = 0; i < this.state.cart.length; i++) {
             total += this.state.cart[i].price
         }
         return total
@@ -64,15 +65,21 @@ class CartPage extends React.Component {
                         {this.state.cart.map(this.renderCart)}
                     </tbody>
                 </table>
-                <div class="cart-button">
-                    <Link to={{
-                        pathname: "/payment",
-                        state: {
-                            amount: this.getCartAmount()
-                        }
-                    }} class="navbar-brand text-right"><img src="cart.png" class="nav-img"/><button type="button" class="btn btn-outline-success cart-button">Purchase</button></Link>
-                    <button type="button" class="btn btn-outline-danger cart-button" onClick={() => this.clearCart()}>Clear</button>
-                </div>
+                <form>
+                    <div className="row">
+                        <div className="col-6">
+                            <Link to={{
+                                pathname: "/payment",
+                                state: {
+                                    amount: this.getCartAmount()
+                                }
+                            }}><button type="button" className="btn btn-outline-success form-control">Purchase</button></Link>
+                        </div>
+                        <div className="col-6">
+                            <button type="button" className="btn btn-outline-danger form-control" onClick={() => this.clearCart()}>Clear</button>
+                        </div>
+                    </div>
+                </form>
             </>
         );
     }

@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import './css/index.css';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 
 import CartPage from "./pages/cart";
@@ -11,6 +11,13 @@ import AfterIssuerPage from "./pages/after_issuer";
 import OrderStatus from "./pages/status";
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      cartSize: localStorage.length
+    }
+  }  
+
   render() {
     return (
       <>
@@ -26,7 +33,7 @@ class App extends React.Component {
             <div class="navbar navbar-light navbar-fixed-top nav">
               <div class="container">
                 <Link to="/catalog" class="navbar-brand nav-p">Shop</Link>
-                <Link to="/cart" class="navbar-brand text-right"><img src="cart.png" class="nav-img"/></Link>
+                <Link to="/cart" class="navbar-brand text-right"><b class="cart-size">{this.state.cartSize}</b><img src="cart.png" class="nav-img" /></Link>
               </div>
             </div>
             <div class="container">

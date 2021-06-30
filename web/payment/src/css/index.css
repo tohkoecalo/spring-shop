@@ -35,6 +35,17 @@ code {
   height: 20px;
 }
 
+.cart-size {
+  display:inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  background: #d9534f 
+}
+
 .cart-button{
   display:inline-block;
   margin-right: 10px;
@@ -42,4 +53,22 @@ code {
 
 .price{
   margin-left: 10px;
+}
+
+.card-preview {
+  margin: 30px;
+}
+
+.h5-order {
+  text-align: center;
+  padding-top: 15px;
+}
+
+form {
+  margin: 30px auto 0;
+  max-width: 400px;
+}
+
+.form-inputs {
+  margin-bottom: 15px;
 }
