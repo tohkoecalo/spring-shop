@@ -40,11 +40,15 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
-    public @ResponseBody boolean createOrderAndCheck3ds(@RequestBody Order order) {
-        if (provider.createOrder(order).equals("Success")){
-            if (provider.check3ds()) {
-                return true;
-            }
+    public @ResponseBody String createOrderAndCheck3ds(@RequestBody Order order) {
+        return provider.createOrder(order);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(path="/order/check3ds")
+    public @ResponseBody boolean check3ds() {
+        if (provider.check3ds()) {
+            return true;
         }
         return false;
     }
@@ -53,7 +57,7 @@ public class RestController {
     @GetMapping(path="/order/getpareq")
     public @ResponseBody String getPareqData() {
         String[] formData = provider.getPAReqForm();
-        return "{ url:" + formData[0] + "md:" + provider.getOrder().getOrderId() + ", pareq:" + formData[1] + "value2 }";
+        return "{ url:" + formData[0] + ", pareq:" + formData[1] + " }";
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

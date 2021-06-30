@@ -18,15 +18,9 @@ public class OperationProvider {
     private static final String RESPONSE_FORMAT = "TKKPG";
 
     private Order order;
-    private String pareq;
 
     public OperationProvider(){
         this.order = new Order();
-        this.pareq = "";
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public String createOrder(Order order){
@@ -51,13 +45,13 @@ public class OperationProvider {
         }
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
-        String status = "Create order process went wrong";
+        //String status = "Create order process went wrong";
         if (Utils.isResponseSuccess(responseDetails)) {
             this.order.setOrderId(responseDetails.get("OrderID"));
             this.order.setSessionId(responseDetails.get("SessionID"));
-            status = "Success";
+            //status = "Success";
         }
-        return status;
+        return order.getOrderId();
     }
 
     public boolean check3ds() {
@@ -114,12 +108,11 @@ public class OperationProvider {
         if (Utils.isResponseSuccess(responseDetails)) {
             result[0] = responseDetails.get("url");
             result[1] = responseDetails.get("pareq");
-            pareq = responseDetails.get("pareq");
         }
         return result;
     }
 
-    public void redirectToIssuer(String url){
+    /*public void redirectToIssuer(String url){
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter mdParam = new RequestParameter("MD", Base64.getEncoder().encodeToString(order.getOrderId().getBytes()));
         RequestParameter termUrlParam = new RequestParameter("TermUrl", "http://localhost:3000/order/issuer_redirect");
@@ -129,7 +122,7 @@ public class OperationProvider {
         if (Utils.isResponseSuccess(responseDetails)) {
             String status = responseDetails.get("OrderStatus");
         }
-    }
+    }*/
 
     public String processPARes(String pares) {
         XmlRequest.Builder builder = XmlRequest.newBuilder();
