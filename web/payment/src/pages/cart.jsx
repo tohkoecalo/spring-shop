@@ -6,40 +6,26 @@ import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-ro
 class CartPage extends React.Component {
     constructor(props) {
         super(props);
+        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         this.state = {
-            isFetching: false,
             cart: []
         }
     }
 
     componentDidMount() {
-        this.setState({ isFetching: true });
-        fetch("http://localhost:8081/cart")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (json) {
-                this.setState({
-                    cart: json,
-                    isFetching: false
-                });
-            }.bind(this))
-            .catch((error) => {
-                console.log(error);
-            });
+        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        this.setState({
+            cart: cartItems
+        });
     }
 
     renderCart = (item, key) => {
-        return <CartRow product={item.name} amount={1} price={1 * item.price + "$"} />
+        return <CartRow product={item.name} amount={1} price={1 * item.price + "₽"} />
     }
 
     clearCart() {
-        localStorage.clear();
-        const requestOptions = {
-            method: 'DELETE'
-        };
-        fetch("http://localhost:8081/cart", requestOptions)
-            .then(() => window.location.reload(false));
+        localStorage.setItem('cart', JSON.stringify([]));
+        window.location.reload(false);
     }
 
     getCartAmount() {
@@ -51,37 +37,42 @@ class CartPage extends React.Component {
     }
 
     render() {
-        if (this.state.isFetching) return <div>Loading...</div>;
-        return (
-            <>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Product</th>
-                            <th scope="col">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.cart.map(this.renderCart)}
-                    </tbody>
-                </table>
-                <form>
-                    <div className="row">
-                        <div className="col-6">
-                            <Link to={{
-                                pathname: "/payment",
-                                state: {
-                                    amount: this.getCartAmount()
-                                }
-                            }}><button type="button" className="btn btn-outline-success form-control">Purchase</button></Link>
+        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cartItems.length == 0) {
+            return(<h5 className="h5-order">Your cart is empty</h5>);
+        } else {
+            return (
+                <>
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.state.cart.map(this.renderCart)}
+                        </tbody>
+                    </table>
+                    <form>
+                        <div className="row">
+                            <div className="col-6">
+                                <Link to={{
+                                    pathname: "/payment",
+                                    state: {
+                                        amount: this.getCartAmount()
+                                    }
+                                }}><button type="button" className="btn btn-outline-success form-control">Purchase</button></Link>
+                            </div>
+                            <div className="col-6">
+                                <button type="button" className="btn btn-outline-danger form-control" onClick={() => this.clearCart()}>Clear</button>
+                            </div>
                         </div>
-                        <div className="col-6">
-                            <button type="button" className="btn btn-outline-danger form-control" onClick={() => this.clearCart()}>Clear</button>
-                        </div>
-                    </div>
-                </form>
-            </>
-        );
+                    </form>
+                </>
+            );
+        }
     }
 }
 

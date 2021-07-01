@@ -9,14 +9,16 @@ import CatalogPage from "./pages/catalog";
 import PaymentPage from "./pages/payment";
 import AfterIssuerPage from "./pages/after_issuer";
 import OrderStatus from "./pages/status";
+import Header from "./components/Header"
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     this.state = {
-      cartSize: localStorage.length
+      cartSize: cartItems.length
     }
-  }  
+  }
 
   render() {
     return (
@@ -30,12 +32,7 @@ class App extends React.Component {
         </head>
         <body>
           <Router>
-            <div class="navbar navbar-light navbar-fixed-top nav">
-              <div class="container">
-                <Link to="/catalog" class="navbar-brand nav-p">Shop</Link>
-                <Link to="/cart" class="navbar-brand text-right"><b class="cart-size">{this.state.cartSize}</b><img src="cart.png" class="nav-img" /></Link>
-              </div>
-            </div>
+          <Header cartSize={this.state.cartSize} />
             <div class="container">
               <Switch>
                 <Route path="/cart" component={CartPage}></Route>

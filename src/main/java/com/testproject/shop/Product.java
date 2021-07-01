@@ -1,7 +1,5 @@
 package com.testproject.shop;
 
-//import javax.persistence.*;
-
 //@Entity
 public class Product {
 

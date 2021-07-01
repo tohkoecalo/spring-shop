@@ -3,9 +3,7 @@ package com.testproject.shop;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.xml.transform.TransformerException;
-import java.util.Base64;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Scope("singleton")
@@ -17,14 +15,13 @@ public class OperationProvider {
     private static final String CURRENCY = "643";
     private static final String RESPONSE_FORMAT = "TKKPG";
 
-    private Order order;
+    private Map<String, Order> orders;// = new HashMap<>();
 
     public OperationProvider(){
-        this.order = new Order();
+        this.orders = new HashMap<>();
     }
 
-    public String createOrder(Order order){
-        this.order = order;
+    public Map<String, String> createOrder(Order order) throws Exception {
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.CREATE_ORDER.getValue());
         builder.setLanguage(LANGUAGE);
@@ -37,24 +34,28 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
         RequestParameter authDataParam = new RequestParameter("authData", "");
-        try {
-            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
-            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
-        } catch (TransformerException e){
-            e.printStackTrace();
-        }
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
+        authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
-        //String status = "Create order process went wrong";
         if (Utils.isResponseSuccess(responseDetails)) {
-            this.order.setOrderId(responseDetails.get("OrderID"));
-            this.order.setSessionId(responseDetails.get("SessionID"));
-            //status = "Success";
+            order.setOrderId(responseDetails.get("OrderID"));
+            order.setSessionId(responseDetails.get("SessionID"));
         }
-        return order.getOrderId();
+        orders.put(order.getOrderId(), order);
+        if (Utils.isResponseSuccess(responseDetails)) {
+            return responseDetails;
+        } else {
+            throw new OperationProviderException("CreateOrder operation went wrong with status: " + responseDetails.get("Status"));
+        }
     }
 
-    public boolean check3ds() {
+    public String getOrderId(Map<String, String> responseDetails){
+        return responseDetails.get("OrderID");
+    }
+
+    public Map<String, String> check3ds(String orderId) throws Exception {
+        Order order = orders.get(orderId);
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.CHECK_3DS_ENROLLED.getValue());
         builder.setMerchant(MERCHANT);
@@ -66,23 +67,24 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
         RequestParameter authDataParam = new RequestParameter("authData", "");
-        try {
-            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
-            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
-        } catch (TransformerException e){
-            e.printStackTrace();
-        }
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
+        authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
+
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
-            if (responseDetails.get("enrolled").equals("Y")){
-                return true;
-            }
+            return responseDetails;
+        } else {
+            throw new OperationProviderException("Check3dsEnrolled operation went wrong with status: " + responseDetails.get("Status"));
         }
-        return false;
     }
 
-    public String[] getPAReqForm() {
+    public boolean isCard3dsEnrolled(Map<String, String> responseDetails){
+        return responseDetails.get("enrolled").equals("Y");
+    }
+
+    public Map<String, String> getPAReqForm(String orderId) throws Exception {
+        Order order = orders.get(orderId);
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.GET_PAREQ_FORM.getValue());
         builder.setMerchant(MERCHANT);
@@ -96,19 +98,21 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
         RequestParameter authDataParam = new RequestParameter("authData", "");
-        try {
-            xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
-            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
-        } catch (TransformerException e){
-            e.printStackTrace();
-        }
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
+        authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
-        String result[] = new String[2];
         if (Utils.isResponseSuccess(responseDetails)) {
-            result[0] = responseDetails.get("url");
-            result[1] = responseDetails.get("pareq");
+            return responseDetails;
+        } else {
+            throw new OperationProviderException("GetPAReqForm operation went wrong with status: " + responseDetails.get("Status"));
         }
+    }
+
+    public String[] getPaReqFormData(Map<String, String> responseDetails) throws Exception {
+        String[] result = new String[2];
+        result[0] = responseDetails.get("url");
+        result[1] = responseDetails.get("pareq");
         return result;
     }
 
@@ -124,7 +128,8 @@ public class OperationProvider {
         }
     }*/
 
-    public String processPARes(String pares) {
+    public Map<String, String> processPARes(String orderId, String pares) throws Exception {
+        Order order = orders.get(orderId);
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.PROCESS_PARES.getValue());
         builder.setMerchant(MERCHANT);
@@ -139,21 +144,19 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
         RequestParameter authDataParam = new RequestParameter("authData", "");
-        try {
-            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
-            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
-        } catch (TransformerException e){
-            e.printStackTrace();
-        }
+        xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
-            return responseDetails.get("OrderStatus");
+            return responseDetails;
+        } else {
+            throw new OperationProviderException("ProcessPARes operation went wrong with status: " + responseDetails.get("Status"));
         }
-        return "Process went wrong";
     }
 
-    public String purchase() {
+    public Map<String, String> purchase(String orderId) throws Exception {
+        Order order = orders.get(orderId);
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.PURCHASE.getValue());
         builder.setMerchant(MERCHANT);
@@ -170,17 +173,24 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter("xmlRequest", "");
         RequestParameter authDataParam = new RequestParameter("authData", "");
-        try {
-            xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
-            authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
-        } catch (TransformerException e){
-            e.printStackTrace();
-        }
+        xmlRequestParam.setValue(Utils.escapeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
-            return responseDetails.get("OrderStatus");
+            return responseDetails;
+        } else {
+            throw new OperationProviderException("Purchase operation went wrong with status: " + responseDetails.get("Status"));
         }
-        return "Process went wrong";
+    }
+
+    String getOrderStatus(Map<String, String> responseDetails) {
+        return responseDetails.get("OrderStatus");
+    }
+
+    private class OperationProviderException extends Exception {
+        public OperationProviderException(String errorMessage) {
+            super(errorMessage);
+        }
     }
 }
