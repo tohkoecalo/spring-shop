@@ -1,7 +1,26 @@
 import React from 'react';
 import '../css/index.css';
-import CartPage from "../pages/cart";
-import Header from './Header';
+import ReactDOM from "react-dom"
+/*import { observer } from "mobx-react-lite"
+import { makeAutoObservable } from "mobx"
+
+class Counter {
+  cartSize = 0
+
+  constructor() {
+    makeAutoObservable(this)
+  }
+
+  update() {
+    var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    this.cartSize = cartItems.length;
+  }
+}
+
+const cartCounter = new Counter()
+const CounterView = observer(({ counter }) => <b class="cart-size">{counter.cartSize}</b>)*/
+//ReactDOM.render(<CounterView counter={cartCounter} />, document.getElementById('counter'))
+
 
 class Product extends React.Component {
   constructor(props) {
@@ -18,7 +37,7 @@ class Product extends React.Component {
     cartItems.forEach(element => {
       if (element.name === this.props.item.name) {
         isAdded = 'true';
-      } 
+      }
     });
     const isItemAdded = isAdded === 'true'; //cringe but works
     this.setState({
