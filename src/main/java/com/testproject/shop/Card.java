@@ -1,5 +1,6 @@
 package com.testproject.shop;
 
+//@Component
 public class Card {
     private String number;
     private String expiry;

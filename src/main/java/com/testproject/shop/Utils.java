@@ -16,18 +16,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import java.net.URLEncoder;
-import org.apache.commons.text.StringEscapeUtils;
 
 public class Utils {
 
-    public static String escapeSymbols(String sourceStr){
-        try {
-            return URLEncoder.encode(sourceStr, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-            return "";
-        }
+    public static String escapeSymbols(String sourceStr) throws UnsupportedEncodingException {
+        return URLEncoder.encode(sourceStr, StandardCharsets.UTF_8.toString());
     }
 
     public static String representXmlDocAsString(Document document) throws TransformerException {
@@ -39,38 +32,28 @@ public class Utils {
         return writer.getBuffer().toString().replaceAll("\n|\r", "");
     }
 
-    public static Document loadXmlDocFromString(String xml) { //Converts XML string to Document
+    public static Document loadXmlDocFromString(String xml) throws Exception { //Converts XML string to Document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder;
-        try {
-            builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(new StringReader(xml)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null; //Never returns, so ok
+        builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(new StringReader(xml)));
     }
 
-    public static String getAuthToken(String xmlRequest, String merchant, String password){
+    public static String getAuthToken(String xmlRequest, String merchant, String password) throws Exception {
         return sha256(sha256(xmlRequest) + "/" + sha256(merchant + "/" + password));
     }
 
-    public static String sha256(String original) { //Found on StackOverflow, chosen because does not use any external libs
+    public static String sha256(String original) throws NoSuchAlgorithmException { //Found on StackOverflow, chosen because does not use any external libs
         byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(original.getBytes(StandardCharsets.UTF_8));
-            byte[] hexChars = new byte[hash.length * 2];
-            for (int j = 0; j < hash.length; j++) {
-                int v = hash[j] & 0xFF;
-                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-            }
-            return new String(hexChars, StandardCharsets.UTF_8).toUpperCase();
-        } catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(original.getBytes(StandardCharsets.UTF_8));
+        byte[] hexChars = new byte[hash.length * 2];
+        for (int j = 0; j < hash.length; j++) {
+            int v = hash[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
-        return "";
+        return new String(hexChars, StandardCharsets.UTF_8).toUpperCase();
     }
 
     public static boolean isResponseSuccess(Map<String, String> response){

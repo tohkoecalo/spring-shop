@@ -1,9 +1,12 @@
 package com.testproject.shop;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Map;
 
 @Controller
 public class RestController {
@@ -17,58 +20,70 @@ public class RestController {
         return db.getCatalog();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(path = "/products", consumes = "application/json")
-    public @ResponseBody void addProductToCart(@RequestBody Product product) {
-        db.addToCart(product);
-    }
-
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(path="/cart")
-    public @ResponseBody Iterable<Product> getCartItems() {
-        return db.getCartItem();
-    }
-
-    @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(path="/cart")
-    public @ResponseBody void clearCart() {
-        db.clearCart();
-    }
-
     @Autowired
     OperationProvider provider;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
-    public @ResponseBody String createOrderAndCheck3ds(@RequestBody Order order) {
-        return provider.createOrder(order);
+    public @ResponseBody String createOrderAndGetId(@RequestBody Order order) {
+        try {
+            Map<String, String> response = provider.createOrder(order);
+            return provider.getOrderId(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException();
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path="/order/check3ds")
-    public @ResponseBody boolean check3ds() {
-        if (provider.check3ds()) {
-            return true;
+    public @ResponseBody boolean isCard3dsEnrolled(@RequestParam String orderId) {
+        try {
+            Map<String, String> response = provider.check3ds(orderId);
+            return provider.isCard3dsEnrolled(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException();
         }
-        return false;
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path="/order/getpareq")
-    public @ResponseBody String getPareqData() {
-        String[] formData = provider.getPAReqForm();
-        return "{ url:" + formData[0] + ", pareq:" + formData[1] + " }";
+    public @ResponseBody String getOrderPareqData(@RequestParam String orderId) {
+        try {
+            Map<String, String> response = provider.getPAReqForm(orderId);
+            String[] formData = provider.getPaReqFormData(response);
+            return "{ url:" + formData[0] + ", pareq:" + formData[1] + " }";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException();
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path="/order/after_issuer")
-    public @ResponseBody String processResp() {
-        return provider.processPARes("test");
+    public @ResponseBody String processRespAndGetOrderStatus(@RequestParam String orderId) {
+        try {
+            Map<String, String> response = provider.processPARes(orderId, "test");
+            return provider.getOrderStatus(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException();
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/purchase", consumes = "application/json")
-    public @ResponseBody String purchase() {
-        return provider.purchase();
+    public @ResponseBody String purchaseAndGetOrderStatus(@RequestParam String orderId) {
+        try {
+            Map<String, String> response = provider.purchase(orderId);
+            return provider.getOrderStatus(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException();
+        }
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public class ServerErrorException extends RuntimeException {}
 }

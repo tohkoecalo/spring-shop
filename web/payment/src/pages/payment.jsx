@@ -33,8 +33,13 @@ export default class PaymentPage extends React.Component {
     handleExpiryChanged(event) {
         var card = this.state.card;
         card.expiry = event.target.value;
-
+        card.expiry = card.expiry.replace('/', '');
+        if (card.expiry.length >= 3) {
+            card.expiry = `${card.expiry.slice(0, 2)}/${card.expiry.slice(2, 4)}`;
+        }
+        
         this.setState({ card: card });
+        document.getElementById('expiry').value = card.expiry
     }
 
     handleCardCvvChanged(event) {
@@ -44,24 +49,33 @@ export default class PaymentPage extends React.Component {
         this.setState({ card: card });
     }
 
-    createOrder() { 
+    prepareCardForOrder(){
+        var card = this.state.card;
+        card.expiry = card.expiry.replace('/', '');
+        card.expiry = `${card.expiry.slice(2, 4)}${card.expiry.slice(0, 2)}`;
+        this.setState({ card: card });
+    }
+
+    createOrder() {
+        this.prepareCardForOrder();
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: this.state.amount, card: this.state.card })
+            body: JSON.stringify({ amount: this.state.amount * 100, card: this.state.card })//edit card expiry format
         };
-        fetch("http://localhost:8081/order/create", requestOptions)
+        fetch("http://localhost:8081/order/create/", requestOptions)
             .then(function (response) {
                 return response.text();
             })
             .then(function (text) {
-                localStorage.setItem('orderId', text)
+                localStorage.setItem('orderId', text);
+                localStorage.setItem('cart', JSON.stringify([]));
             })
     }
 
     check3ds() {
         var is3dsEnrolled = 'fasle';
-        fetch("http://localhost:8081/order/check3ds")
+        fetch("http://localhost:8081/order/check3ds/orderId=" + localStorage.getItem('orderId'))
             .then(function (response) {
                 return response.text();
             })
@@ -81,10 +95,10 @@ export default class PaymentPage extends React.Component {
             body: 'MD=' + encodeURIComponent(window.btoa(localStorage.getItem('orderId'))) + '&TermUrl=' + encodeURIComponent(termUrl) + '&Pareq=' + encodeURIComponent(pareq)
         };
         fetch(nextUrl, requestOptions)
-            .then(function(response) {
+            .then(function (response) {
                 return response.text();
             })
-            .then(function(text){
+            .then(function (text) {
                 console.log(text);
             })
         //fetch processpares
@@ -93,7 +107,7 @@ export default class PaymentPage extends React.Component {
     runPurchase() {
         this.createOrder();
         if (this.check3ds()) {
-            fetch("http://localhost:8081/order/getpareq")
+            fetch("http://localhost:8081/order/getpareq/orderId=" + localStorage.getItem('orderId'))
                 .then(function (response) {
                     return response.json();
                 })
@@ -102,7 +116,7 @@ export default class PaymentPage extends React.Component {
                     this.getPareq(json.url, redirectUrl, json.pareq);
                 })
         } else {
-            fetch("http://localhost:8081/order/purchase")
+            fetch("http://localhost:8081/order/purchase/orderId=" + localStorage.getItem('orderId'))
                 .then(function (response) {
                     return response.text()
                 })
@@ -121,13 +135,14 @@ export default class PaymentPage extends React.Component {
                         name={this.state.card.name}
                         number={this.state.card.number}
                     />
-                    <form>
+                    <form ref={c => (this.form = c)}>
                         <div className="form-group form-inputs">
                             <input
                                 type="tel"
                                 name="number"
                                 className="form-control"
                                 placeholder="Card Number"
+                                maxlength="19"
                                 onChange={this.handleCardNumberChanged.bind(this)}
                                 onFocus={this.handleInputFocus}
                             />
@@ -135,11 +150,12 @@ export default class PaymentPage extends React.Component {
                         <div className="row form-inputs">
                             <div className="col-6">
                                 <input
+                                    id="expiry"
                                     type="tel"
                                     name="expiry"
                                     className="form-control"
                                     placeholder="Valid Thru"
-                                    pattern="\d\d/\d\d"
+                                    maxlength="5"
                                     required
                                     onChange={this.handleExpiryChanged.bind(this)}
                                     onFocus={this.handleInputFocus}
@@ -150,8 +166,8 @@ export default class PaymentPage extends React.Component {
                                     type="tel"
                                     name="cvc"
                                     className="form-control"
-                                    placeholder="CVC"
-                                    pattern="\d{3,4}"
+                                    placeholder="CVV"
+                                    maxlength="4"
                                     required
                                     onChange={this.handleCardCvvChanged.bind(this)}
                                     onFocus={this.handleInputFocus}

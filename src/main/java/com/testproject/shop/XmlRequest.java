@@ -30,13 +30,13 @@ public class XmlRequest {
         return body;
     }
 
-    public static Builder newBuilder() {
+    public static Builder newBuilder() throws Exception {
         return new XmlRequest().new Builder();
     }
 
     public class Builder{
-        private Builder(){
-            try {
+        private Builder() throws ParserConfigurationException {
+
                 DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
                 XmlRequest.this.body = documentBuilder.newDocument();
@@ -50,9 +50,7 @@ public class XmlRequest {
 
                 Element order = XmlRequest.this.body.createElement("Order");
                 request.appendChild(order);
-            } catch (ParserConfigurationException e){
-                e.printStackTrace();
-            }
+
         }
 
         public Builder setOperation(String operation){

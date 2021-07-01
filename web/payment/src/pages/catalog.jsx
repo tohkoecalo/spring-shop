@@ -5,6 +5,7 @@ import '../css/index.css';
 class CatalogPage extends React.Component {
     constructor(props) {
         super(props);
+        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         this.state = {
             isFetching: false,
             products: []
@@ -29,12 +30,16 @@ class CatalogPage extends React.Component {
     }
 
     renderProds = (item, index) => {
-        return <Product item={item} />
+        return <Product item={item}/>
     }
 
     render() {
         if (this.state.isFetching) return <div>Loading...</div>;
-        return this.state.products.map(this.renderProds);
+        return (
+            <>
+                {this.state.products.map(this.renderProds)}
+            </>
+        )
     }
 }
 

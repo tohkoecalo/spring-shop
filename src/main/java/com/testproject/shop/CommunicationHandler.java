@@ -22,50 +22,41 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 public class CommunicationHandler {
     public CommunicationHandler(){}
 
-    public Map<String, String> provideRequest(String url, RequestParameter... params) {
+    public Map<String, String> provideRequest(String url, RequestParameter... params) throws Exception {
         Map<String, String> responseDetails = null;
-        try {
-            responseDetails = getResponseDataAsMap(sendRequest(url, params));//Utils.representXmlDocAsString(body)
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        responseDetails = getResponseDataAsMap(sendRequest(url, params));
         return responseDetails;
     }
 
-    private String sendRequest(String url, RequestParameter... params) { //Methods sends only HTTP POST request
+    private String sendRequest(String url, RequestParameter... params) throws Exception { //Methods sends only HTTP POST request
         StringBuilder body = new StringBuilder();
         for (RequestParameter param : params){
             body.append(Utils.escapeSymbols(param.getKey())).append("=").append(Utils.escapeSymbols(param.getValue())).append("&");
         }
         body.deleteCharAt(body.length() - 1);
-        try {
-            URL rUrl = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
-            connection.setRequestMethod(HttpMethod.POST.toString());
-            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, APPLICATION_FORM_URLENCODED.toString());
-            connection.setDoOutput(true);
 
-            try(OutputStream os = connection.getOutputStream()) {
-                byte[] input = body.toString().getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
-            }
-
-            BufferedReader reader = null;
-            StringBuilder stringBuilder;
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            stringBuilder = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            return stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+        URL rUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) rUrl.openConnection();
+        connection.setRequestMethod(HttpMethod.POST.toString());
+        connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, APPLICATION_FORM_URLENCODED.toString());
+        connection.setDoOutput(true);
+        try(OutputStream os = connection.getOutputStream()) {
+            byte[] input = body.toString().getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
         }
-        return "";
+
+        BufferedReader reader = null;
+        StringBuilder stringBuilder;
+        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        stringBuilder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        return stringBuilder.toString();
     }
 
-    private Map<String, String> getResponseDataAsMap(String xmlResponse) {
+    private Map<String, String> getResponseDataAsMap(String xmlResponse) throws Exception {
         Map<String, String> result = new HashMap<>();
         Document xmlDoc = Utils.loadXmlDocFromString(xmlResponse);
         DocumentTraversal traversal = (DocumentTraversal) xmlDoc;
