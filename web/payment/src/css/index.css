@@ -15,7 +15,7 @@ code {
 .card-inline {
   width: 20%; 
   margin: 2%;
-  display: inline-block !important;
+  display: inline-flex !important;
 }
 
 .nav {
@@ -30,9 +30,19 @@ code {
   cursor: pointer;
 }
 
+.nav-p:hover {
+  text-shadow: 0 0 5px #ccc;
+}
+
 .nav-img {
   filter: brightness(0) invert(1);
   height: 20px;
+}
+
+.nav-img:hover {
+  height: 20px;
+  -webkit-filter: drop-shadow(0 0 5px #222);
+  filter: drop-shadow(0 0 5px #222) brightness(0) invert(1);
 }
 
 .cart-size {

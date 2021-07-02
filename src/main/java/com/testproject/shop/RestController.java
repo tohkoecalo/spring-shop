@@ -23,12 +23,15 @@ public class RestController {
     @Autowired
     OperationProvider provider;
 
+    @Autowired
+    ResponseFieldsExtractor extractor;
+
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path="/order/create")
     public @ResponseBody String createOrderAndGetId(@RequestBody Order order) {
         try {
             Map<String, String> response = provider.createOrder(order);
-            return provider.getOrderId(response);
+            return extractor.getOrderId(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();
@@ -40,7 +43,7 @@ public class RestController {
     public @ResponseBody boolean isCard3dsEnrolled(@RequestParam String orderId) {
         try {
             Map<String, String> response = provider.check3ds(orderId);
-            return provider.isCard3dsEnrolled(response);
+            return extractor.isCard3dsEnrolled(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();
@@ -52,7 +55,7 @@ public class RestController {
     public @ResponseBody String getOrderPareqData(@RequestParam String orderId) {
         try {
             Map<String, String> response = provider.getPAReqForm(orderId);
-            String[] formData = provider.getPaReqFormData(response);
+            String[] formData = extractor.getPaReqFormData(response);
             return "{ url:" + formData[0] + ", pareq:" + formData[1] + " }";
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +68,7 @@ public class RestController {
     public @ResponseBody String processRespAndGetOrderStatus(@RequestParam String orderId) {
         try {
             Map<String, String> response = provider.processPARes(orderId, "test");
-            return provider.getOrderStatus(response);
+            return extractor.getOrderStatus(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();
@@ -77,7 +80,7 @@ public class RestController {
     public @ResponseBody String purchaseAndGetOrderStatus(@RequestParam String orderId) {
         try {
             Map<String, String> response = provider.purchase(orderId);
-            return provider.getOrderStatus(response);
+            return extractor.getOrderStatus(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();

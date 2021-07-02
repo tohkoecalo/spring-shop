@@ -1,13 +1,13 @@
 import React from "react";
 import CartRow from "../components/CartRow"
 import '../css/index.css';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 class CartPage extends React.Component {
     constructor(props) {
         super(props);
-        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         this.state = {
+            counter: this.props.counter,
             cart: []
         }
     }
@@ -20,11 +20,12 @@ class CartPage extends React.Component {
     }
 
     renderCart = (item, key) => {
-        return <CartRow product={item.name} amount={1} price={1 * item.price + "₽"} />
+        return <CartRow key={key} product={item.name} amount={1} price={1 * item.price + "₽"} />
     }
 
     clearCart() {
         localStorage.setItem('cart', JSON.stringify([]));
+        this.state.counter.update();
         window.location.reload(false);
     }
 
@@ -38,13 +39,12 @@ class CartPage extends React.Component {
 
     render() {
         var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        if (cartItems.length == 0) {
+        if (cartItems.length === 0) {
             return(<h5 className="h5-order">Your cart is empty</h5>);
         } else {
             return (
                 <>
-                    
-                    <table class="table table-striped">
+                    <table className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">Product</th>

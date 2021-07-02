@@ -5,8 +5,8 @@ class CartRow extends React.Component {
     render() {
         return (
             <tr>
-                <td scope="col">{this.props.product}</td>
-                <td scope="col">{this.props.price}</td>
+                <td>{this.props.product}</td>
+                <td>{this.props.price}</td>
             </tr>
         );
     }

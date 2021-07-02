@@ -1,33 +1,12 @@
 import React from 'react';
 import '../css/index.css';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
-import ReactDOM from "react-dom"
-import { makeAutoObservable } from "mobx"
-import { observer } from "mobx-react-lite"
-
-class Counter {
-    cartSize = 0
-  
-    constructor() {
-      makeAutoObservable(this)
-    }
-  
-    update() {
-      var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-      this.cartSize = cartItems.length;
-    }
-  }
-  
-  const cartCounter = new Counter()
-  const CounterView = observer(({ counter }) => <b class="cart-size">{counter.cartSize}</b>)
-  //ReactDOM.render(<CounterView counter={cartCounter} />, document.getElementById('counter'))
-
+import { Link } from "react-router-dom";
 
 class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            cartSize: this.props.cartSize
+            counter: this.props.counter
         }
     }
 
@@ -40,14 +19,14 @@ class Header extends React.Component {
 
     render() {
         return (
-            <div class="navbar navbar-light navbar-fixed-top nav">
-                <div class="container">
-                    <Link to="/catalog" class="navbar-brand nav-p">Shop</Link>
-                    <Link to="/cart" class="navbar-brand text-right"><b id='counter'></b><img src="cart.png" class="nav-img" /></Link>
+            <div className="navbar navbar-light navbar-fixed-top nav">
+                <div className="container">
+                    <Link to="/catalog" className="navbar-brand nav-p">Shop</Link>
+                    <Link to="/cart" className="navbar-brand text-right"><div id="counter"></div><img src="cart.png" className="nav-img" alt="Cart" /></Link>
                 </div>
             </div>
         );
     }
 }
 
-export default Header;//<b class="cart-size">{this.state.cartSize}</b>
+export default Header;//<b id='counter'></b> <b class="cart-size" id='counter'>{this.state.counter.cartSize}</b>

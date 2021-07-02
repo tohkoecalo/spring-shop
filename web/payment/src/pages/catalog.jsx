@@ -5,8 +5,8 @@ import '../css/index.css';
 class CatalogPage extends React.Component {
     constructor(props) {
         super(props);
-        var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         this.state = {
+            counter: this.props.counter,
             isFetching: false,
             products: []
         }
@@ -30,7 +30,7 @@ class CatalogPage extends React.Component {
     }
 
     renderProds = (item, index) => {
-        return <Product item={item}/>
+        return <Product key={index} item={item} counter={this.state.counter}/>
     }
 
     render() {

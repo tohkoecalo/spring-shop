@@ -1,6 +1,6 @@
 import React from "react";
 import '../css/index.css';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
 
@@ -80,7 +80,7 @@ export default class PaymentPage extends React.Component {
                 return response.text();
             })
             .then(function (text) {
-                if (text == 'true') {
+                if (text === 'true') {
                     is3dsEnrolled = true;
 
                 }
@@ -142,7 +142,7 @@ export default class PaymentPage extends React.Component {
                                 name="number"
                                 className="form-control"
                                 placeholder="Card Number"
-                                maxlength="19"
+                                maxLength="19"
                                 onChange={this.handleCardNumberChanged.bind(this)}
                                 onFocus={this.handleInputFocus}
                             />
@@ -155,7 +155,7 @@ export default class PaymentPage extends React.Component {
                                     name="expiry"
                                     className="form-control"
                                     placeholder="Valid Thru"
-                                    maxlength="5"
+                                    maxLength="5"
                                     required
                                     onChange={this.handleExpiryChanged.bind(this)}
                                     onFocus={this.handleInputFocus}
@@ -167,23 +167,23 @@ export default class PaymentPage extends React.Component {
                                     name="cvc"
                                     className="form-control"
                                     placeholder="CVV"
-                                    maxlength="4"
+                                    maxLength="4"
                                     required
                                     onChange={this.handleCardCvvChanged.bind(this)}
                                     onFocus={this.handleInputFocus}
                                 />
                             </div>
                         </div>
-                        <form>
+                        <div>
                             <div className="row">
                                 <div className="col-6">
                                     <button type="button" className="btn btn-outline-success form-control" onClick={() => this.runPurchase()}>Pay</button>
                                 </div>
                                 <div className="col-6">
-                                    <Link to="/catalog"><button type="button" class="btn btn-outline-danger form-control">Cancel</button></Link>
+                                    <Link to="/catalog"><button type="button" className="btn btn-outline-danger form-control">Cancel</button></Link>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </form>
                 </div>
             </>
