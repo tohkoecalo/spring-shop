@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class Utils {
 
-    public static String escapeSymbols(String sourceStr) throws UnsupportedEncodingException {
+    public static String encodeSymbols(String sourceStr) throws UnsupportedEncodingException { //Encodes special symbols to url view
         return URLEncoder.encode(sourceStr, StandardCharsets.UTF_8.toString());
     }
 

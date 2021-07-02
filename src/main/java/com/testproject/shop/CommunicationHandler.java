@@ -23,15 +23,14 @@ public class CommunicationHandler {
     public CommunicationHandler(){}
 
     public Map<String, String> provideRequest(String url, RequestParameter... params) throws Exception {
-        Map<String, String> responseDetails = null;
-        responseDetails = getResponseDataAsMap(sendRequest(url, params));
+        Map<String, String> responseDetails = getResponseDataAsMap(sendRequest(url, params));
         return responseDetails;
     }
 
     private String sendRequest(String url, RequestParameter... params) throws Exception { //Methods sends only HTTP POST request
         StringBuilder body = new StringBuilder();
         for (RequestParameter param : params){
-            body.append(Utils.escapeSymbols(param.getKey())).append("=").append(Utils.escapeSymbols(param.getValue())).append("&");
+            body.append(Utils.encodeSymbols(param.getKey())).append("=").append(Utils.encodeSymbols(param.getValue())).append("&");
         }
         body.deleteCharAt(body.length() - 1);
 

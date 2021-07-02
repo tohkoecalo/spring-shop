@@ -36,21 +36,19 @@ public class XmlRequest {
 
     public class Builder{
         private Builder() throws ParserConfigurationException {
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            XmlRequest.this.body = documentBuilder.newDocument();
+            XmlRequest.this.body.setXmlVersion("1.0");
 
-                DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-                XmlRequest.this.body = documentBuilder.newDocument();
-                XmlRequest.this.body.setXmlVersion("1.0");
+            Element root = XmlRequest.this.body.createElement("TKKPG");
+            XmlRequest.this.body.appendChild(root);
 
-                Element root = XmlRequest.this.body.createElement("TKKPG");
-                XmlRequest.this.body.appendChild(root);
+            Element request = XmlRequest.this.body.createElement("Request");
+            root.appendChild(request);
 
-                Element request = XmlRequest.this.body.createElement("Request");
-                root.appendChild(request);
-
-                Element order = XmlRequest.this.body.createElement("Order");
-                request.appendChild(order);
-
+            Element order = XmlRequest.this.body.createElement("Order");
+            request.appendChild(order);
         }
 
         public Builder setOperation(String operation){

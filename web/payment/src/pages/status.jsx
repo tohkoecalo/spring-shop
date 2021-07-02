@@ -2,10 +2,6 @@ import React from "react";
 import '../css/index.css';
 
 class StatusPage extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     getStatus(){
         const params = new URL(window.location.href).searchParams;
         if (params.has('status')){
