@@ -8,6 +8,7 @@ import CatalogPage from "./pages/catalog";
 import PaymentPage from "./pages/payment";
 import AfterIssuerPage from "./pages/after_issuer";
 import OrderStatus from "./pages/status";
+import ErrorPage from "./pages/error";
 import Header from "./components/Header"
 import ReactDOM from "react-dom"
 import { observer } from "mobx-react-lite"
@@ -60,6 +61,7 @@ class App extends React.Component {
               ></Route>
               <Route path="/issuer_redirect" component={AfterIssuerPage}></Route>
               <Route path="/status" component={OrderStatus}></Route>
+              <Route path="/error" component={ErrorPage}></Route>
               <Route name="payment" component={PaymentPage}></Route>
               <Redirect to="/catalog"></Redirect>
             </Switch>

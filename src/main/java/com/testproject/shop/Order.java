@@ -5,14 +5,16 @@ public class Order {
     private Card card;
     private String orderId;
     private String sessionId;
+    private String orderStatus;
 
     public Order(){}
 
-    public Order(String amount, Card card, String orderId, String sessionId){
+    public Order(String amount, Card card, String orderId, String sessionId, String orderStatus){
         this.amount = amount;
         this.card = card;
         this.orderId = orderId;
         this.sessionId = sessionId;
+        this.orderStatus = orderStatus;
     }
 
     public String getAmount() {
@@ -31,6 +33,10 @@ public class Order {
         return sessionId;
     }
 
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
     public void setAmount(String amount) {
         this.amount = amount;
     }
@@ -45,5 +51,9 @@ public class Order {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

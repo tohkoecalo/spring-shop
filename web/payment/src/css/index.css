@@ -12,14 +12,39 @@ code {
     monospace;
 }
 
-.card-inline {
-  width: 20%; 
-  margin: 2%;
-  display: inline-flex !important;
+.products {
+  display: flex;
+  justify-content: space-between;
+  /*justify-content: space between;
+  display:flex;
+  flex-wrap:wrap;
+  margin:0 auto;*/
+}
+
+@media screen and (min-width: 40em) {
+  .product-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .product-item {
+    flex: 0 1 calc(50% - 1em);
+  }
+}
+
+@media screen and (min-width: 60em) {
+  .product-item {
+    margin-top: 20px;
+    flex: 0 1 calc(25% - 1em);
+  }
+}
+
+.card {
+  margin-top: 15px;
 }
 
 .nav {
-  /*background-color: #073a61;*/
   background-color: #0275d8;
 }
 
