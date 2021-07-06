@@ -37,7 +37,7 @@ export default class PaymentPage extends React.Component {
         if (card.expiry.length >= 3) {
             card.expiry = `${card.expiry.slice(0, 2)}/${card.expiry.slice(2, 4)}`;
         }
-        
+
         this.setState({ card: card });
         document.getElementById('expiry').value = card.expiry
     }
@@ -49,7 +49,7 @@ export default class PaymentPage extends React.Component {
         this.setState({ card: card });
     }
 
-    prepareCardForOrder(){
+    prepareCardForOrder() {
         var card = this.state.card;
         card.expiry = card.expiry.replace('/', '');
         card.expiry = `${card.expiry.slice(2, 4)}${card.expiry.slice(0, 2)}`;
@@ -75,7 +75,7 @@ export default class PaymentPage extends React.Component {
 
     check3ds() {
         var is3dsEnrolled = 'fasle';
-        fetch("http://localhost:8081/order/check3ds/orderId=" + localStorage.getItem('orderId'))
+        fetch("http://localhost:8081/order/check3ds?orderId=" + localStorage.getItem('orderId'))
             .then(function (response) {
                 return response.text();
             })
@@ -96,18 +96,23 @@ export default class PaymentPage extends React.Component {
         };
         fetch(nextUrl, requestOptions)
             .then(function (response) {
-                return response.text();
-            })
-            .then(function (text) {
-                console.log(text);
+                this.handleRedirect(response, nextUrl);
             })
         //fetch processpares
+    }
+
+    handleRedirect(res, url){
+        if( res.status === 200 ){
+             window.location.href = url;
+        } else {
+          // Something went wrong here
+        }
     }
 
     runPurchase() {
         this.createOrder();
         if (this.check3ds()) {
-            fetch("http://localhost:8081/order/getpareq/orderId=" + localStorage.getItem('orderId'))
+            fetch("http://localhost:8081/order/getpareq?orderId=" + localStorage.getItem('orderId'))
                 .then(function (response) {
                     return response.json();
                 })
@@ -116,11 +121,11 @@ export default class PaymentPage extends React.Component {
                     this.getPareq(json.url, redirectUrl, json.pareq);
                 })
         } else {
-            fetch("http://localhost:8081/order/purchase/orderId=" + localStorage.getItem('orderId'))
+            fetch("http://localhost:8081/order/purchase?orderId=" + localStorage.getItem('orderId'))
                 .then(function (response) {
                     return response.text()
                 })
-        }
+        }            
     }
 
     render() {

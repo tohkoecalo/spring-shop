@@ -40,9 +40,7 @@ public class OperationProvider {
         if (Utils.isResponseSuccess(responseDetails)) {
             order.setOrderId(responseDetails.get("OrderID"));
             order.setSessionId(responseDetails.get("SessionID"));
-        }
-        orders.put(order.getOrderId(), order);
-        if (Utils.isResponseSuccess(responseDetails)) {
+            orders.put(order.getOrderId(), order);
             return responseDetails;
         } else {
             throw new OperationProviderException("CreateOrder operation went wrong with status: " + responseDetails.get("Status"));
@@ -133,6 +131,7 @@ public class OperationProvider {
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
+            order.setOrderStatus(responseDetails.get("Status"));
             return responseDetails;
         } else {
             throw new OperationProviderException("ProcessPARes operation went wrong with status: " + responseDetails.get("Status"));
@@ -162,6 +161,7 @@ public class OperationProvider {
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
+            order.setOrderStatus(responseDetails.get("Status"));
             return responseDetails;
         } else {
             throw new OperationProviderException("Purchase operation went wrong with status: " + responseDetails.get("Status"));

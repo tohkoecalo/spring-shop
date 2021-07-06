@@ -39,7 +39,7 @@ class Product extends React.Component {
   render() {
     const isAdded = this.state.isAddedToCart;
     return (
-      <div className="card-inline card">
+      <div className="product-item card">
         <img src="placeholder_vertical.png" className="card-img-top" alt="placeholder"></img>
         <div className="card-body">
           <h5 className="card-title">{this.props.item.name}</h5>

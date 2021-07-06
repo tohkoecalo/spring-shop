@@ -3,7 +3,7 @@ import '../css/index.css';
 
 class AfterIssuerPage extends React.Component {
     getStatus() {
-        fetch("http://localhost:8081/order/after_issuer")
+        fetch("http://localhost:8081/order/after_issuer?orderId="  + localStorage.getItem('orderId'))
             .then(function(response) {
                 return response.text();
             }) 

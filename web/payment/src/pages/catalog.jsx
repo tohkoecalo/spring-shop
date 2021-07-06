@@ -36,9 +36,11 @@ class CatalogPage extends React.Component {
     render() {
         if (this.state.isFetching) return <div>Loading...</div>;
         return (
-            <>
-                {this.state.products.map(this.renderProds)}
-            </>
+            <div className="products">
+                <div className="product-group">
+                    {this.state.products.map(this.renderProds)}
+                </div>
+            </div> 
         )
     }
 }
