@@ -15,7 +15,7 @@ export default class PaymentPage extends React.Component {
                 cvv: "",
                 name: "Compass plus"
             },
-            amount: props.location.state.amount
+            amount: props.location.state.amount || 0
         };
     }
 
@@ -61,7 +61,7 @@ export default class PaymentPage extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: this.state.amount * 100, card: this.state.card })//edit card expiry format
+            body: JSON.stringify({ amount: this.state.amount * 100, card: this.state.card })
         };
         fetch("http://localhost:8081/order/create/", requestOptions)
             .then(function (response) {

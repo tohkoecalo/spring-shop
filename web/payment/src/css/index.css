@@ -71,11 +71,12 @@ code {
 }
 
 .cart-size {
+  padding-bottom:10px;
   display:inline-block;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 13px;
   color: #fff;
   text-align: center;
   background: #d9534f 
