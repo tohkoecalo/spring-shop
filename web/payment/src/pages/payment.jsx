@@ -65,7 +65,11 @@ export default class PaymentPage extends React.Component {
         };
         fetch("http://localhost:8081/order/create/", requestOptions)
             .then(function (response) {
-                return response.text();
+                if (response.status === 200){
+                    return response.text();
+                } else {
+                    window.location.href = "http://localhost:3000/error"
+                }
             })
             .then(function (text) {
                 localStorage.setItem('orderId', text);
@@ -77,7 +81,11 @@ export default class PaymentPage extends React.Component {
         var is3dsEnrolled = 'fasle';
         fetch("http://localhost:8081/order/check3ds?orderId=" + localStorage.getItem('orderId'))
             .then(function (response) {
-                return response.text();
+                if (response.status === 200){
+                    return response.text();
+                } else {
+                    window.location.href = "http://localhost:3000/error"
+                }
             })
             .then(function (text) {
                 if (text === 'true') {
@@ -105,7 +113,7 @@ export default class PaymentPage extends React.Component {
         if( res.status === 200 ){
              window.location.href = url;
         } else {
-          // Something went wrong here
+            window.location.href = "http://localhost:3000/error"
         }
     }
 
