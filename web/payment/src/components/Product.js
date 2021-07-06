@@ -33,6 +33,7 @@ class Product extends React.Component {
     cartItems.push(product);
     localStorage.setItem('cart', JSON.stringify(cartItems));
     this.state.counter.update();
+    this.state.counter.draw();
     //window.location.reload(true)
   }
 

@@ -26,6 +26,7 @@ class CartPage extends React.Component {
     clearCart() {
         localStorage.setItem('cart', JSON.stringify([]));
         this.state.counter.update();
+        this.state.counter.draw();
         window.location.reload(false);
     }
 

@@ -25,11 +25,15 @@ class Counter {
     var cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     this.cartSize = cartItems.length;
   }
+
+  draw() {
+    ReactDOM.render(<CounterView counter={this} />, document.getElementById("counter"))
+  }
 }
 
 const cartCounter = new Counter()
-const CounterView = observer(({ counter }) => <b className="cart-size">{counter.cartSize}</b>)
-ReactDOM.render(<CounterView counter={cartCounter} />, document.getElementById("counter"))
+const CounterView = observer(({ counter }) => <b>{counter.cartSize}</b>)
+
 
 class App extends React.Component {
   constructor(props) {
@@ -40,13 +44,14 @@ class App extends React.Component {
     }
   }
 
-  render() {
+  render() {//<Redirect from="/" to="/catalog" />
     return (
       <>
         <Router>
           <Header counter={cartCounter} />
           <div className="container">
             <Switch>
+              <Redirect exact from="/" to="/catalog" />
               <Route
                 path="/cart"
                 render={() => (
