@@ -5,7 +5,7 @@ class ErrorPage extends React.Component {
     render() {
         return (
             <>
-                <p>Error: </p>
+                <p>Error</p>
             </>
         )
     }

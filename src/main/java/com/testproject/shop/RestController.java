@@ -31,7 +31,8 @@ public class RestController {
     public @ResponseBody String createOrderAndGetId(@RequestBody Order order) {
         try {
             Map<String, String> response = provider.createOrder(order);
-            return extractor.getOrderId(response);
+            return "test";
+            //return extractor.getOrderId(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();
