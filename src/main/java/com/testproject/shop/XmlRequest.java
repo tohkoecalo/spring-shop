@@ -59,6 +59,10 @@ public class XmlRequest {
             return setRequestElement("Language", language);
         }
 
+        public Builder setOrderType(String orderType){
+            return setOrderElement("OrderType", orderType);
+        }
+
         public Builder setMerchant(String merchant){
             return setOrderElement("Merchant", merchant);
         }

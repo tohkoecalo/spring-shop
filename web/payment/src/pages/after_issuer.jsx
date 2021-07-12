@@ -8,7 +8,7 @@ class AfterIssuerPage extends React.Component {
                 return response.text();
             }) 
             .then(function(text) {
-                window.location.href = "http://localhost:3000/status?status=" + text;
+                window.location.href = "http://localhost:8081/status?status=" + text;
             })
     }
 

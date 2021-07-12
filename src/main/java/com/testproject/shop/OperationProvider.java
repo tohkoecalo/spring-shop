@@ -12,7 +12,7 @@ public class OperationProvider {
     private static final String LANGUAGE = "RU";
     private static final String MERCHANT = "POS_1";
     private static final String PASSWORD = "12345";
-    private static final String CURRENCY = "643";
+    private static final String CURRENCY = "840";
 
     private Map<String, Order> orders;// = new HashMap<>();
 
@@ -24,6 +24,7 @@ public class OperationProvider {
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.CREATE_ORDER.getValue());
         builder.setLanguage(LANGUAGE);
+        builder.setOrderType("Purchase");
         builder.setMerchant(MERCHANT);
         builder.setAmount(order.getAmount());
         builder.setCurrency(CURRENCY);
@@ -126,7 +127,7 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter(RequestParameter.XML_REQUEST_PARAMETER_KEY, "");
         RequestParameter authDataParam = new RequestParameter(RequestParameter.AUTH_DATA_PARAMETER_KEY, "");
-        xmlRequestParam.setValue(Utils.encodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
         authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
@@ -156,7 +157,7 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter(RequestParameter.XML_REQUEST_PARAMETER_KEY, "");
         RequestParameter authDataParam = new RequestParameter(RequestParameter.AUTH_DATA_PARAMETER_KEY, "");
-        xmlRequestParam.setValue(Utils.encodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        xmlRequestParam.setValue(Utils.urlEncodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
         authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
