@@ -10,7 +10,7 @@ import java.util.List;
 @Scope("singleton")
 public class PhantomDataBase {
     private enum PRICE {
-        First(199), Second(119), Third(69), Fourth(229);
+        First(25), Second(119), Third(69), Fourth(229);
 
         private double value;
 

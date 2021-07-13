@@ -10,8 +10,8 @@ public class UtilsTests {
     @Test
     @DisplayName("Test of special characters encoding")
     public void testEncodeSymbols() throws Exception {
-        assertEquals("%3CTEST%3E", Utils.encodeSymbols("<TEST>"));
-        assertEquals("%3C%2FTEST%3E", Utils.encodeSymbols("</TEST>"));
+        assertEquals("%3CTEST%3E", Utils.urlEncodeSymbols("<TEST>"));
+        assertEquals("%3C%2FTEST%3E", Utils.urlEncodeSymbols("</TEST>"));
     }
 
     @Test

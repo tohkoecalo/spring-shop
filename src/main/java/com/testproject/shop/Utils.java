@@ -11,16 +11,27 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 
 public class Utils {
 
-    public static String encodeSymbols(String sourceStr) throws UnsupportedEncodingException { //Encodes special symbols to url view
+    public static String urlEncodeSymbols(String sourceStr) throws UnsupportedEncodingException { //Encodes special symbols to url view
         return URLEncoder.encode(sourceStr, StandardCharsets.UTF_8.toString());
+    }
+
+    public static String urlDecodeSymbols(String sourceStr) throws UnsupportedEncodingException { //Decodes special symbols to url view
+        return URLDecoder.decode(sourceStr, StandardCharsets.UTF_8.toString());
+    }
+
+    public static String decodeFromBase64(String sourceStr){
+        byte[] decodedBytes = Base64.getDecoder().decode(sourceStr);
+        return new String(decodedBytes);
     }
 
     public static String representXmlDocAsString(Document document) throws TransformerException {

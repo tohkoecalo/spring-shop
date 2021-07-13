@@ -12,18 +12,23 @@ public class OperationProvider {
     private static final String LANGUAGE = "RU";
     private static final String MERCHANT = "POS_1";
     private static final String PASSWORD = "12345";
-    private static final String CURRENCY = "643";
+    private static final String CURRENCY = "840";
 
-    private Map<String, Order> orders;// = new HashMap<>();
+    private Map<String, Order> orders;
 
     public OperationProvider(){
         this.orders = new HashMap<>();
+    }
+
+    public String getOrderStatus(String orderId){
+        return orders.get(orderId).getOrderStatus();
     }
 
     public Map<String, String> createOrder(Order order) throws Exception {
         XmlRequest.Builder builder = XmlRequest.newBuilder();
         builder.setOperation(XmlRequest.Operation.CREATE_ORDER.getValue());
         builder.setLanguage(LANGUAGE);
+        builder.setOrderType("Purchase");
         builder.setMerchant(MERCHANT);
         builder.setAmount(order.getAmount());
         builder.setCurrency(CURRENCY);
@@ -98,18 +103,6 @@ public class OperationProvider {
         }
     }
 
-    /*public void redirectToIssuer(String url){
-        CommunicationHandler ch = new CommunicationHandler();
-        RequestParameter mdParam = new RequestParameter("MD", Base64.getEncoder().encodeToString(order.getOrderId().getBytes()));
-        RequestParameter termUrlParam = new RequestParameter("TermUrl", "http://localhost:3000/order/issuer_redirect");
-        RequestParameter pareqParam = new RequestParameter("PaReq", pareq);
-
-        Map<String, String> responseDetails = ch.provideRequest(url, mdParam, termUrlParam, pareqParam);
-        if (Utils.isResponseSuccess(responseDetails)) {
-            String status = responseDetails.get("OrderStatus");
-        }
-    }*/
-
     public Map<String, String> processPARes(String orderId, String pares) throws Exception {
         Order order = orders.get(orderId);
         XmlRequest.Builder builder = XmlRequest.newBuilder();
@@ -126,12 +119,12 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter(RequestParameter.XML_REQUEST_PARAMETER_KEY, "");
         RequestParameter authDataParam = new RequestParameter(RequestParameter.AUTH_DATA_PARAMETER_KEY, "");
-        xmlRequestParam.setValue(Utils.encodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
         authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
-            order.setOrderStatus(responseDetails.get("Status"));
+            order.setOrderStatus(responseDetails.get("OrderStatus"));
             return responseDetails;
         } else {
             throw new OperationProviderException("ProcessPARes operation went wrong with status: " + responseDetails.get("Status"));
@@ -156,12 +149,12 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter(RequestParameter.XML_REQUEST_PARAMETER_KEY, "");
         RequestParameter authDataParam = new RequestParameter(RequestParameter.AUTH_DATA_PARAMETER_KEY, "");
-        xmlRequestParam.setValue(Utils.encodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        xmlRequestParam.setValue(Utils.urlEncodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
         authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
         if (Utils.isResponseSuccess(responseDetails)) {
-            order.setOrderStatus(responseDetails.get("Status"));
+            order.setOrderStatus(responseDetails.get("OrderStatus"));
             return responseDetails;
         } else {
             throw new OperationProviderException("Purchase operation went wrong with status: " + responseDetails.get("Status"));

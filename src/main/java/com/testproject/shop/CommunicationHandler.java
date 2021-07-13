@@ -30,7 +30,7 @@ public class CommunicationHandler {
     private String sendRequest(String url, RequestParameter... params) throws Exception { //Methods sends only HTTP POST request
         StringBuilder body = new StringBuilder();
         for (RequestParameter param : params){
-            body.append(Utils.encodeSymbols(param.getKey())).append("=").append(Utils.encodeSymbols(param.getValue())).append("&");
+            body.append(Utils.urlEncodeSymbols(param.getKey())).append("=").append(Utils.urlEncodeSymbols(param.getValue())).append("&");
         }
         body.deleteCharAt(body.length() - 1);
 

@@ -3,6 +3,7 @@ import '../css/index.css';
 import { Link } from "react-router-dom";
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
+import ReactDOM from "react-dom"
 
 export default class PaymentPage extends React.Component {
     constructor(props) {
@@ -13,10 +14,12 @@ export default class PaymentPage extends React.Component {
                 number: "",
                 expiry: "",
                 cvv: "",
-                name: "Compass plus"
+                name: "Compass plus",
+                is3dsEnrolled: false
             },
             amount: props.location.state.amount || 0
         };
+
     }
 
     handleInputFocus = (e) => {
@@ -57,83 +60,88 @@ export default class PaymentPage extends React.Component {
     }
 
     createOrder() {
-        this.prepareCardForOrder();
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: this.state.amount * 100, card: this.state.card })
-        };
-        fetch("http://localhost:8081/order/create/", requestOptions)
-            .then(function (response) {
-                if (response.status === 200){
-                    return response.text();
-                } else {
-                    window.location.href = "http://localhost:3000/error"
-                }
-            })
-            .then(function (text) {
-                localStorage.setItem('orderId', text);
-                localStorage.setItem('cart', JSON.stringify([]));
-            })
+        return new Promise((resolve, reject) => {
+            this.prepareCardForOrder();
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: this.state.amount * 100, card: this.state.card })
+            };
+            fetch("http://localhost:8081/order/create/", requestOptions)
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.text();
+                    } else {
+                        window.location.href = "http://localhost:8081/error"
+                    }
+                })
+                .then(function (text) {
+                    localStorage.setItem('orderId', text);
+                    localStorage.setItem('cart', JSON.stringify([]));
+                })
+                .then((value) => resolve(value))
+        })
     }
 
     check3ds() {
-        var is3dsEnrolled = 'fasle';
-        fetch("http://localhost:8081/order/check3ds?orderId=" + localStorage.getItem('orderId'))
-            .then(function (response) {
-                if (response.status === 200){
-                    return response.text();
-                } else {
-                    window.location.href = "http://localhost:3000/error"
-                }
-            })
-            .then(function (text) {
-                if (text === 'true') {
-                    is3dsEnrolled = true;
-
-                }
-            })
-        return is3dsEnrolled;
+        return new Promise((resolve, reject) => {
+            var cardFor3ds = this.state.card;
+            var _this = this;
+            fetch("http://localhost:8081/order/check3ds?orderId=" + localStorage.getItem('orderId'))
+                .then(function (response) {
+                    if (response.status === 200) {
+                        return response.text();
+                    } else {
+                        window.location.href = "http://localhost:8081/error"
+                    }
+                })
+                .then(function (text) {
+                    if (text === 'true') {
+                        cardFor3ds.is3dsEnrolled = true;
+                        _this.state.card.is3dsEnrolled = true;
+                    }
+                })
+                .then((value) => resolve(value))
+        })
     }
 
-    getPareq(nextUrl, termUrl, pareq) {//send pares to server //window.location.href = text
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' },
-            body: 'MD=' + encodeURIComponent(window.btoa(localStorage.getItem('orderId'))) + '&TermUrl=' + encodeURIComponent(termUrl) + '&Pareq=' + encodeURIComponent(pareq)
-        };
-        fetch(nextUrl, requestOptions)
-            .then(function (response) {
-                this.handleRedirect(response, nextUrl);
-            })
-        //fetch processpares
-    }
-
-    handleRedirect(res, url){
-        if( res.status === 200 ){
-             window.location.href = url;
-        } else {
-            window.location.href = "http://localhost:3000/error"
-        }
+    getPareq(nextUrl, termUrl, pareq) {//send pares to server 
+        let form = document.createElement('form');
+        form.action = nextUrl;
+        form.method = "POST";
+        form.innerHTML = "<input name=\"MD\" value=\"" + window.btoa(localStorage.getItem('orderId')) + "\" hidden>" + 
+            "<input name=\"TermUrl\" value=\""+ termUrl + "\" hidden>" + 
+            "<input name=\"PaReq\" value=\""+ pareq + "\" hidden>";
+        document.body.append(form);
+        form.submit();
     }
 
     runPurchase() {
-        this.createOrder();
-        if (this.check3ds()) {
-            fetch("http://localhost:8081/order/getpareq?orderId=" + localStorage.getItem('orderId'))
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (json) {
-                    var redirectUrl = "http://localhost:3000/issuer_redirect";
-                    this.getPareq(json.url, redirectUrl, json.pareq);
-                })
-        } else {
-            fetch("http://localhost:8081/order/purchase?orderId=" + localStorage.getItem('orderId'))
-                .then(function (response) {
-                    return response.text()
-                })
-        }            
+        var _this = this;
+        this.createOrder()
+            .then(function () {
+                _this.check3ds()
+                    .then(function () {
+                        if (_this.state.card.is3dsEnrolled) {
+                            fetch("http://localhost:8081/order/getpareq?orderId=" + localStorage.getItem('orderId'))
+                                .then(function (response) {
+                                    return response.json();
+                                })
+                                .then(function (json) {
+                                    var redirectUrl = "http://localhost:8081/order/after_issuer";
+                                    _this.getPareq(json.url, redirectUrl, json.pareq);
+                                })
+                        } else {
+                            const requestOptions = {
+                                method: 'POST'
+                            };
+                            fetch("http://localhost:8081/order/purchase?orderId=" + localStorage.getItem('orderId'), requestOptions)
+                                .then(function (response) {
+                                    return response.text()
+                                })
+                        }
+                    });
+            })
     }
 
     render() {

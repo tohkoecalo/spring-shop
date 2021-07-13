@@ -20,7 +20,7 @@ class CartPage extends React.Component {
     }
 
     renderCart = (item, key) => {
-        return <CartRow key={key} product={item.name} amount={1} price={1 * item.price + "₽"} />
+        return <CartRow key={key} product={item.name} amount={1} price={1 * item.price + "$"} />
     }
 
     clearCart() {

@@ -9,6 +9,7 @@ import PaymentPage from "./pages/payment";
 import AfterIssuerPage from "./pages/after_issuer";
 import OrderStatus from "./pages/status";
 import ErrorPage from "./pages/error";
+import FormPage from "./pages/form";
 import Header from "./components/Header"
 import ReactDOM from "react-dom"
 import { observer } from "mobx-react-lite"
@@ -44,7 +45,7 @@ class App extends React.Component {
     }
   }
 
-  render() {//<Redirect from="/" to="/catalog" />
+  render() {
     return (
       <>
         <Router>
@@ -64,8 +65,9 @@ class App extends React.Component {
                   <CatalogPage counter={cartCounter} />
                 )}
               ></Route>
-              <Route path="/issuer_redirect" component={AfterIssuerPage}></Route>
+              <Route path="/order/after_issuer" component={AfterIssuerPage}></Route>
               <Route path="/status" component={OrderStatus}></Route>
+              <Route path="/form" component={FormPage}></Route>
               <Route path="/error" component={ErrorPage}></Route>
               <Route name="payment" component={PaymentPage}></Route>
               <Redirect to="/catalog"></Redirect>
