@@ -34,7 +34,6 @@ class Product extends React.Component {
     localStorage.setItem('cart', JSON.stringify(cartItems));
     this.state.counter.update();
     this.state.counter.draw();
-    //window.location.reload(true)
   }
 
   render() {
@@ -47,7 +46,7 @@ class Product extends React.Component {
           <p className="card-text">{this.props.item.description}</p>
           {!isAdded && <button className="btn btn-outline-primary" onClick={() => this.addToCart(this.props.item)}>Add to cart</button>}
           {isAdded && <button className="btn btn-primary" disabled>Added</button>}
-          <b className="price">{this.props.item.price}₽</b>
+          <b className="price">{this.props.item.price}$</b>
         </div>
       </div>
     );

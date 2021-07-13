@@ -14,7 +14,7 @@ class CatalogPage extends React.Component {
 
     componentDidMount() {
         this.setState({ isFetching: true });
-        fetch("http://localhost:8081/products")
+        fetch("/products")
             .then(function (response) {
                 return response.json();
             })
