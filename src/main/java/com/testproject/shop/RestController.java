@@ -13,7 +13,7 @@ import java.util.Map;
 @Controller
 public class RestController {
 
-    @RequestMapping(value = { "/catalog", "/cart", "/error", "/form", "/status", "/order/after_issuer" })
+    @RequestMapping(value = { "/", "/catalog", "/cart", "/error", "/form", "/status", "/order/after_issuer" })
     public String index() {
         return "index.html";
     }
@@ -91,11 +91,11 @@ public class RestController {
     }
 
     @PostMapping(path="/order/purchase")
-    public @ResponseBody String purchase(HttpServletResponse result, @RequestParam String orderId) {
+    public @ResponseBody void purchase(HttpServletResponse result, @RequestParam String orderId) {
         try {
             Map<String, String> response = provider.purchase(orderId);
-            result.sendRedirect("http://localhost:8081/status");
-            return extractor.getOrderStatus(response);
+            result.sendRedirect("../status");
+            return;// extractor.getOrderStatus(response);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ServerErrorException();

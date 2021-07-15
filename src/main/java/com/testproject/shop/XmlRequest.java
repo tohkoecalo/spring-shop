@@ -71,6 +71,14 @@ public class XmlRequest {
             return setOrderElement("Amount", amount);
         }
 
+        public Builder setPurchaseAmount(String amount){
+            return setRequestElement("Amount", amount);
+        }
+
+        public Builder setPurchaseCurrency(String currency){
+            return setRequestElement("Currency", currency);
+        }
+
         public Builder setCurrency(String currency){
             return setOrderElement("Currency", currency);
         }
