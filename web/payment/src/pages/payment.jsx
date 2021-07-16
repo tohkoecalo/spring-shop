@@ -72,7 +72,7 @@ export default class PaymentPage extends React.Component {
                     if (response.status === 200) {
                         return response.text();
                     } else {
-                        window.location.href = "http://localhost:8081/error"
+                        window.location.href = "http://localhost:8081/error?message=Error while creating your order"
                     }
                 })
                 .then(function (text) {
@@ -92,7 +92,7 @@ export default class PaymentPage extends React.Component {
                     if (response.status === 200) {
                         return response.text();
                     } else {
-                        window.location.href = "http://localhost:8081/error"
+                        window.location.href = "http://localhost:8081/error?message=Error while checking 3DSecure of your card"
                     }
                 })
                 .then(function (text) {
@@ -102,6 +102,7 @@ export default class PaymentPage extends React.Component {
                     }
                 })
                 .then((value) => resolve(value))
+
         })
     }
 
@@ -125,7 +126,12 @@ export default class PaymentPage extends React.Component {
                         if (_this.state.card.is3dsEnrolled) {
                             fetch("http://localhost:8081/order/getpareq?orderId=" + localStorage.getItem('orderId'))
                                 .then(function (response) {
-                                    return response.json();
+                                    if (response.status === 200){
+                                        return response.json();
+                                    } else {
+                                        window.location.href = "http://localhost:8081/error?message=Error while processing order"
+                                    }
+                                    
                                 })
                                 .then(function (json) {
                                     var redirectUrl = "http://localhost:8081/order/after_issuer";
@@ -137,10 +143,14 @@ export default class PaymentPage extends React.Component {
                             };
                             fetch("http://localhost:8081/order/purchase?orderId=" + localStorage.getItem('orderId'), requestOptions)
                                 .then(function (response) {
-                                    return response.text()
+                                    if (response.status === 200){
+                                        return response.json();
+                                    } else {
+                                        window.location.href = "http://localhost:8081/error?message=Error while purchasing"
+                                    }                               
                                 })
                         }
-                    });
+                    })
             })
     }
 

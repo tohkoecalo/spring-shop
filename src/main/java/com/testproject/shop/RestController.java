@@ -1,6 +1,7 @@
 package com.testproject.shop;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,7 @@ public class RestController {
             return extractor.getOrderId(response);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class RestController {
             return extractor.isCard3dsEnrolled(response);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
@@ -62,7 +63,7 @@ public class RestController {
             return "{ \"url\":\"" + formData[0] + "\", \"pareq\":\"" + formData[1] + "\" }";
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
@@ -86,19 +87,19 @@ public class RestController {
             return extractor.getOrderStatus(response);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
     @PostMapping(path="/order/purchase")
-    public @ResponseBody void purchase(HttpServletResponse result, @RequestParam String orderId) {
+    public @ResponseBody String purchase(HttpServletResponse result, @RequestParam String orderId) {
         try {
             Map<String, String> response = provider.purchase(orderId);
-            result.sendRedirect("../status");
-            return;// extractor.getOrderStatus(response);
+            result.sendRedirect("http://localhost:8081/status");
+            return extractor.getOrderStatus(response);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
@@ -108,10 +109,14 @@ public class RestController {
             return provider.getOrderStatus(orderId);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException();
+            throw new ServerErrorException(e.getMessage());
         }
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public class ServerErrorException extends RuntimeException {}
+    public class ServerErrorException extends RuntimeException {
+        public ServerErrorException(String errorMessage){
+            super(errorMessage);
+        }
+    }
 }
