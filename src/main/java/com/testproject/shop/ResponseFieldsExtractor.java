@@ -15,7 +15,10 @@ public class ResponseFieldsExtractor {
     }
 
     public boolean isCard3dsEnrolled(Map<String, String> responseDetails){
-        return responseDetails.get("enrolled").equals("Y");
+        if (responseDetails.containsKey("enrolled")){
+            return responseDetails.get("enrolled").equals("Y");
+        }
+        return false;
     }
 
     public String[] getPaReqFormData(Map<String, String> responseDetails) throws Exception {

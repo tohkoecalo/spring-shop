@@ -9,6 +9,7 @@ import java.util.*;
 @Scope("singleton")
 public class OperationProvider {
     private static final String TWGP_URL = "http://10.77.201.18:5556/execpwd";
+    private static final String TMP_URL = "http://localhost:9999";
     private static final String LANGUAGE = "RU";
     private static final String MERCHANT = "POS_1";
     private static final String PASSWORD = "12345";
@@ -138,8 +139,8 @@ public class OperationProvider {
         builder.setMerchant(MERCHANT);
         builder.setOrderId(order.getOrderId());
         builder.setSessionId(order.getSessionId());
-        builder.setAmount(order.getAmount());
-        builder.setCurrency(CURRENCY);
+        builder.setPurchaseAmount(order.getAmount());
+        builder.setPurchaseCurrency(CURRENCY);
         builder.setPAN(order.getCard().getNumber());
         builder.setExpDate(order.getCard().getExpiry());
         builder.setCVV2(order.getCard().getCvv());
@@ -149,7 +150,7 @@ public class OperationProvider {
         CommunicationHandler ch = new CommunicationHandler();
         RequestParameter xmlRequestParam = new RequestParameter(RequestParameter.XML_REQUEST_PARAMETER_KEY, "");
         RequestParameter authDataParam = new RequestParameter(RequestParameter.AUTH_DATA_PARAMETER_KEY, "");
-        xmlRequestParam.setValue(Utils.urlEncodeSymbols(Utils.representXmlDocAsString(rq.getBody())));
+        xmlRequestParam.setValue(Utils.representXmlDocAsString(rq.getBody()));
         authDataParam.setValue(Utils.getAuthToken(Utils.representXmlDocAsString(rq.getBody()), MERCHANT, PASSWORD));
 
         Map<String, String> responseDetails = ch.provideRequest(TWGP_URL, authDataParam, xmlRequestParam);
