@@ -13,7 +13,7 @@ import java.util.Map;
 @Controller
 public class RestController {
 
-    @RequestMapping(value = { "/", "/catalog", "/cart", "/error", "/form", "/status", "/order/after_issuer" })
+    @RequestMapping(value = { "/", "/catalog", "/cart", "/form", "/status", "/order/after_issuer" })
     public String index() {
         return "index.html";
     }
